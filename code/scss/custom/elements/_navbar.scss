@@ -1,0 +1,14 @@
+.navbar {
+    background-color: var(--primary);
+
+    .logo {
+        width: 100px;
+        max-height: 40px;
+    }
+
+    .nav-divider {
+        border-right: solid 1px var(--primary-dark);
+        margin: 0 1rem;
+    }
+
+}

@@ -1,0 +1,8 @@
+/mysql
+/docker/nginx/logs
+/docker/traefik/acme
+/docker/portainer
+/docker/.env
+/.env
+
+/code/public/styles/*.css

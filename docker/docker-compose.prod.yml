@@ -1,0 +1,51 @@
+version: '3.4'
+services:
+    nginx:
+        container_name: mcmap_nginx
+        image: nginx:latest
+        ports:
+            - "8083:80"
+            - "4001:443"
+        build:
+            context: ../
+            dockerfile: docker/nginx/prod/Dockerfile
+        networks:
+            - proxy.mcmap
+        env_file:
+            - .env
+        links:
+            - php-fpm
+        depends_on:
+            - mysql
+    php-fpm:
+        container_name: mcmap_php-fpm
+        build:
+            context: ../
+            dockerfile: docker/php-fpm/prod/Dockerfile
+        expose:
+            - "9000"
+        labels:
+            - traefik.enable=false
+        networks:
+            - proxy.mcmap
+        env_file:
+            - .env
+        links:
+            - mysql
+        depends_on:
+            - mysql
+    mysql:
+        container_name: mcmap_mysql
+        image: mysql:5.7.22
+        expose:
+            - "3306"
+        env_file: .env
+        labels:
+            - traefik.enable=false
+        networks:
+            - proxy.mcmap
+networks:
+    proxy.mcmap:
+        driver: overlay
+        external: true
+        attachable: true
