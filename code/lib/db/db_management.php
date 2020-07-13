@@ -5,18 +5,37 @@ function getPlaces($dimension = 'Overworld')
     global $pdo;
 
     // get plugins
-    $stmt = $pdo->prepare("SELECT places.id,places.title,places.coordX,places.coordY,places.coordZ,places.comment,icons.url AS icon FROM mcmap.places LEFT JOIN mcmap.icons ON places.icon = icons.id WHERE places.published = 1 AND places.dimension = ?");
+    $stmt = $pdo->prepare("SELECT places.id,places.title,places.coordX,places.coordY,places.coordZ,places.comment,places.icon,icons.url AS icon_url FROM mcmap.places LEFT JOIN mcmap.icons ON places.icon = icons.id WHERE places.published = 1 AND places.dimension = ?");
     $stmt->execute([$dimension]);
     $result = $stmt->fetchAll();
 
     return $result;
 }
 
+function getPlace($id)
+{
+    global $pdo;
+
+    if (!$id) {
+        $result['status'] = 'error';
+        $result['message'] = 'Please provide a place ID or dimension';
+        return $result;
+    }
+
+    // get single place
+    $stmt = $pdo->prepare("SELECT places.id,places.title,places.coordX,places.coordY,places.coordZ,places.comment,places.icon,icons.url AS icon_url FROM mcmap.places LEFT JOIN mcmap.icons ON places.icon = icons.id WHERE places.published = 1 AND places.id = ?");
+    $stmt->execute([$id]);
+    $result = $stmt->fetch();
+
+    return $result;
+
+}
+
 function getIcons()
 {
     global $pdo;
 
-    // get plugins
+    // get places
     $stmt = $pdo->prepare("SELECT * FROM mcmap.icons WHERE `published` = 1 ORDER BY name ASC");
     $stmt->execute();
     $result = $stmt->fetchAll();
@@ -70,12 +89,16 @@ function savePlace($formData)
         $formData['comment'] = NULL;
     }
 
+    if (!$formData['id']) {
+        $formData['id'] = NULL;
+    }
+
     debug($formData['dimension']);
 
   // USERS db insert
   $sql = "INSERT INTO `mcmap`.`places`
-        (`title`, `coordX`, `coordY`, `coordZ`, `comment`, `dimension`, `icon`)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (`id`,`title`, `coordX`, `coordY`, `coordZ`, `comment`, `dimension`, `icon`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
         `title` = ?,
         `coordX` = ?, 
@@ -87,6 +110,7 @@ function savePlace($formData)
         ;";
   try {
     $pdo->prepare($sql)->execute([
+        $formData['id'],
         $formData['title'],
         $formData['coordX'],
         $formData['coordY'],

@@ -42,7 +42,7 @@ switch ($_GET['q1']) {
 }
 
 // debugging
-//debug($_GET, 'GET');
+debug($_GET, 'GET');
 // debug($_ENV, 'ENV');
 // debug($_POST, 'POST');
 // debug($db_status, 'DB status');

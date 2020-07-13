@@ -147,7 +147,7 @@ function getPlaces(clear = false) {
             // in minecraft, north is towards negative Z, so we have to invert it
 
             var coords = [-data[i]['coordZ'], data[i]['coordX']];
-            var icon = new blockIcon({ iconUrl: data[i]['icon'] });
+            var icon = new blockIcon({ iconUrl: data[i]['icon_url'] });
 
             var popup = '<h4>' + data[i]['title'] + '</h4>';
             popup += '<h6><i class="fas fa-map-marker-alt"></i> Coordenadas:</h6>';
