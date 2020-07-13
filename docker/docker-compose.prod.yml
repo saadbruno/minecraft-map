@@ -24,8 +24,6 @@ services:
             dockerfile: docker/php-fpm/prod/Dockerfile
         expose:
             - "9000"
-        labels:
-            - traefik.enable=false
         networks:
             - proxy.mcmap
         env_file:
@@ -40,8 +38,6 @@ services:
         expose:
             - "3306"
         env_file: .env
-        labels:
-            - traefik.enable=false
         networks:
             - proxy.mcmap
 networks:
