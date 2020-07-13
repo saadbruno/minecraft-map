@@ -209,8 +209,14 @@ var mcMap = L.map('overworld', {
     minZoom: -5
 });
 
+
 var bounds = [[-5000, -5000], [5000, 5000]];
 var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap);
+
+
+var bounds = [[-470, -370], [397, 977]];
+var image = L.imageOverlay('/public/media/img/map/overworld1.jpg', bounds, {opacity: 0.3, zIndex: -1 }).addTo(mcMap);
+
 
 mcMap.setView([0, 500], -1);
 
