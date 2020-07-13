@@ -18,7 +18,7 @@
         <!-- submit  -->
 
         <div class="nav-user ml-md-2 mt-2 mt-md-0">
-            <div class="dropdown">
+            <div id="submitFormDropdown" class="dropdown">
 
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="submitButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-map-marker-alt"></i> Adicionar marcação

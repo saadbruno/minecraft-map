@@ -7,8 +7,6 @@
 
         <input type="hidden" name="id" value="">
 
-        <input type="hidden" name="dimension" value="Overworld">
-
         <!-- name  -->
         <div class="form-group">
             <label for="title" class="w-100"> Nome</label>
@@ -20,7 +18,7 @@
         <!-- dimension -->
         <div class="form-group">
             <label for="icon">Dimensão</label>
-            <select class="form-control" name="icon">
+            <select class="form-control" name="dimension">
                 <option value='Overworld'>Overworld</option>
                 <option value='Nether'>Nether</option>
             </select>

@@ -23,7 +23,7 @@ function getPlace($id)
     }
 
     // get single place
-    $stmt = $pdo->prepare("SELECT places.id,places.title,places.coordX,places.coordY,places.coordZ,places.comment,places.icon,icons.url AS icon_url FROM mcmap.places LEFT JOIN mcmap.icons ON places.icon = icons.id WHERE places.published = 1 AND places.id = ?");
+    $stmt = $pdo->prepare("SELECT places.id,places.title,places.coordX,places.coordY,places.coordZ,places.dimension,places.comment,places.icon,icons.url AS icon_url FROM mcmap.places LEFT JOIN mcmap.icons ON places.icon = icons.id WHERE places.published = 1 AND places.id = ?");
     $stmt->execute([$id]);
     $result = $stmt->fetch();
 

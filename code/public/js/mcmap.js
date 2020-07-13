@@ -3,6 +3,11 @@ $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
 
+// let's reset the dropdown form every time the dropdown is hidden, to prevent accidentally editing an existing place
+$('#submitFormDropdown').on('hidden.bs.dropdown', function () {
+    resetForm('submit-form');
+})
+
 // validation for submit button
 $('#submit-form').on('submit', function (e) {
     e.preventDefault();
@@ -53,7 +58,7 @@ $('#submit-form').on('submit', function (e) {
 
                 // // hides bootstrap dropdown and resets the form
                 // $('#submitButton').dropdown('hide')
-                // document.forms["submit-form"].reset();
+                // resetForm('submit-form');
 
             } else if (data.status == 'error') {
                 console.log('erro?');
@@ -78,7 +83,42 @@ $('#submit-form').on('submit', function (e) {
 
 });
 
+// reset form
+function resetForm(formId) {
+    console.log('resetting form ' + formId);
+    document.forms[formId].reset();
+    $('#' + formId).find('textarea[name="comment"]').html('').val('');
+}
 
+// EDIT place
+function editPlace(btn) {
+
+    // resets the form, just in case
+    $('#submitButton').dropdown('hide');
+    resetForm('submit-form');
+
+    var placeId = $(btn).data('placeid');
+    console.log('request to edit ' + placeId);
+
+    // gets current data from the database
+    $.getJSON("/api/places/" + placeId, function (data, status) {
+        console.log(data);
+
+        // opens the edit dropdown
+        $('#submitButton').dropdown('show');
+
+        $('#submit-form').find('input[name="id"]').val(data['id']);
+        $('#submit-form').find('input[name="title"]').val(data['title']);
+        $('#submit-form').find('select[name="dimension"]').val(data['dimension']);
+        $('#submit-form').find('input[name="coordX"]').val(data['coordX']);
+        $('#submit-form').find('input[name="coordY"]').val(data['coordY']);
+        $('#submit-form').find('input[name="coordZ"]').val(data['coordZ']);
+        $('#submit-form').find('select[name="icon"]').val(data['icon']);
+        $('#submit-form').find('textarea[name="comment"]').html(data['comment']).val(data['comment']);
+
+    });
+
+}
 
 // ================
 // MAP STUFF 
@@ -114,11 +154,12 @@ function getPlaces(clear = false) {
 
             if (data[i]['comment'] != null) {
                 popup += '<h6><i class="fas fa-comment-dots"></i> Comentários:</h6>';
-                popup += data[i]['comment'];
+                popup += '<p>' + data[i]['comment'] + '</p>';
             }
 
-            // creates marker
+            popup += '<button onclick="editPlace(this)" class="editPlace btn btn-secondary btn-sm" data-placeId="' + data[i]['id'] + '"><i class="fas fa-edit"></i> Editar</button>';
 
+            // creates marker
             var marker = L.marker(coords, { icon: icon }).addTo(mcMap).bindPopup(popup);
         }
 
