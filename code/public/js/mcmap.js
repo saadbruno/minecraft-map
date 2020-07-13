@@ -85,49 +85,6 @@ $('#submit-form').on('submit', function (e) {
 // ================
 
 
-window.onload = function () {
-
-    // var overworldMap = drawMap('overworld');
-    getPlaces();
-};
-
-
-// icons
-
-var blockIcon = L.Icon.extend({
-    options: {
-        iconSize: [30, 30],
-        iconAnchor: [15, 15],
-        popupAnchor: [0, -15]
-    }
-});
-
-
-// // Overworld map
-
-
-var mcMap = L.map('overworld', {
-    crs: L.CRS.Simple,
-    minZoom: -5
-});
-
-var bounds = [[-5000, -5000], [5000, 5000]];
-var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap);
-
-mcMap.setView([0, 500], -1);
-
-L.control.scale({ imperial: false }).addTo(mcMap);
-// adds the XZ map axis to the bottom left of the map 
-
-var mapAxis = L.control({ position: "bottomleft" });
-mapAxis.onAdd = function (mcMap) {
-    var div = L.DomUtil.create("div", "info legend");
-    div.innerHTML = '<img class="mapAxis" src="/public/media/img/axis.svg">';
-    return div;
-}
-mapAxis.addTo(mcMap);
-
-
 // Gets all the places via ajax, and loops through each, adding markers to the map
 function getPlaces(clear = false) {
 
@@ -168,3 +125,40 @@ function getPlaces(clear = false) {
     });
 
 }
+
+// icons
+var blockIcon = L.Icon.extend({
+    options: {
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        popupAnchor: [0, -15]
+    }
+});
+
+// // Overworld map
+var mcMap = L.map('overworld', {
+    crs: L.CRS.Simple,
+    minZoom: -5
+});
+
+var bounds = [[-5000, -5000], [5000, 5000]];
+var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap);
+
+mcMap.setView([0, 500], -1);
+
+L.control.scale({ imperial: false }).addTo(mcMap);
+// adds the XZ map axis to the bottom left of the map 
+
+var mapAxis = L.control({ position: "bottomleft" });
+mapAxis.onAdd = function (mcMap) {
+    var div = L.DomUtil.create("div", "info legend");
+    div.innerHTML = '<img class="mapAxis" src="/public/media/img/axis.svg">';
+    return div;
+}
+mapAxis.addTo(mcMap);
+
+window.onload = function () {
+
+    // var overworldMap = drawMap('overworld');
+    getPlaces();
+};
