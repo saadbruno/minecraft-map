@@ -144,8 +144,9 @@ function getPlaces(clear = false) {
         for (i = 0; i < data.length; i++) {
 
             // defines marker data
+            // in minecraft, north is towards negative Z, so we have to invert it
 
-            var coords = [data[i]['coordZ'], data[i]['coordX']];
+            var coords = [-data[i]['coordZ'], data[i]['coordX']];
             var icon = new blockIcon({ iconUrl: data[i]['icon'] });
 
             var popup = '<h4>' + data[i]['title'] + '</h4>';
