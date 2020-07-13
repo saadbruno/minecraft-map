@@ -16,8 +16,6 @@ $('#submit-form').on('submit', function (e) {
     $('#submit-form').find('input').removeClass('is-invalid');
 
     var formData = new FormData(this);
-    console.log(formData);
-
 
     $.ajax({
         url: "/",
@@ -28,46 +26,42 @@ $('#submit-form').on('submit', function (e) {
 
         // this success doesn't mean it sucessfully added a new entry to th database. It just means the server got the POST succesfully, and will do validation
         success: function (data, textStatus, jqXHR) {
-            console.log(data);
-
-
+            //console.log(data);
 
             // decides what to do with the reply
-
             // if the message was 'success', adds icon to map without reloading the page, and move map view
             if (data.status == 'success') {
 
-                location.reload();
+                // location.reload();
+                if (data.id == 0) {
+                    console.log('no change detected');
+                } else {
+                    $.getJSON("/api/places/" + data.id, function (newMarker, status) {
 
+                        // deletes the old marker if it was an update
+                        if (data.action == 'update') {
+                            clearMarker(data.id);
+                        }
 
-                // WIP CODE TO SHOW NEW PLACE WITHOUT RELOADING THE PAGE
+                        // creates a new marker, with the popup open
+                        createMarker(newMarker, true);
 
-                // var serialized = $('form').serializeArray(data);
-                // var formattedData = {};
+                        // moves map view to the submitted thing
+                        var coords = [-newMarker['coordZ'], newMarker['coordX']];
+                        mcMap.setView(coords, -1);
 
-                // $.each(serialized, function (i, field) {
-                //     // console.log(field.name);
-                //     formattedData[field.name] = field.value;
-                // });
-                // console.log('formatted:');
-                // console.log(formattedData);
+                        // closes the dropdown
+                        $('#submitButton').dropdown('hide');
 
-                // // moves map view to the submitted thing
-                // mcMap.setView([formattedData['coordZ'], formattedData['coordX']], -1);
-
-
-                // // hides bootstrap dropdown and resets the form
-                // $('#submitButton').dropdown('hide')
-                // resetForm('submit-form');
+                    });
+                }
 
             } else if (data.status == 'error') {
-                console.log('erro?');
                 // loops through error messages, adding feedback to the user
                 const keys = Object.keys(data.validation);
                 for (const key of keys) {
 
                     var input = 'input[name="' + key + '"]';
-                    console.log(input);
                     $('#submit-form').find(input).addClass('is-invalid');
                     $('#submit-form').find(input).siblings('.invalid-feedback').html(data.validation[key]);
                 }
@@ -85,9 +79,10 @@ $('#submit-form').on('submit', function (e) {
 
 // reset form
 function resetForm(formId) {
-    console.log('resetting form ' + formId);
+    // console.log('resetting form ' + formId);
     document.forms[formId].reset();
     $('#' + formId).find('textarea[name="comment"]').html('').val('');
+    $('#' + formId).find('.is-invalid').removeClass('is-invalid');
 }
 
 // EDIT place
@@ -98,11 +93,11 @@ function editPlace(btn) {
     resetForm('submit-form');
 
     var placeId = $(btn).data('placeid');
-    console.log('request to edit ' + placeId);
+    // console.log('request to edit ' + placeId);
 
     // gets current data from the database
     $.getJSON("/api/places/" + placeId, function (data, status) {
-        console.log(data);
+        // console.log(data);
 
         // opens the edit dropdown
         $('#submitButton').dropdown('show');
@@ -134,38 +129,70 @@ function getPlaces(clear = false) {
     }
 
     $.getJSON("/api/places/overworld", function (data, status) {
-        console.log(data);
-        console.log(data[1]['title']);
+        // console.log(data);
+        // console.log(data[1]['title']);
 
         var i;
         for (i = 0; i < data.length; i++) {
 
-            // defines marker data
-            // in minecraft, north is towards negative Z, so we have to invert it
-
-            var coords = [-data[i]['coordZ'], data[i]['coordX']];
-            var icon = new blockIcon({ iconUrl: data[i]['icon_url'] });
-
-            var popup = '<h4>' + data[i]['title'] + '</h4>';
-            popup += '<h6><i class="fas fa-map-marker-alt"></i> Coordenadas:</h6>';
-            popup += '<p>X: ' + data[i]['coordX'];
-            popup += '<br>Y: ' + data[i]['coordY'];
-            popup += '<br>Z: ' + data[i]['coordZ'] + '</p>';
-
-            if (data[i]['comment'] != null) {
-                popup += '<h6><i class="fas fa-comment-dots"></i> Comentários:</h6>';
-                popup += '<p>' + data[i]['comment'] + '</p>';
-            }
-
-            popup += '<button onclick="editPlace(this)" class="editPlace btn btn-secondary btn-sm" data-placeId="' + data[i]['id'] + '"><i class="fas fa-edit"></i> Editar</button>';
-
-            // creates marker
-            var marker = L.marker(coords, { icon: icon }).addTo(mcMap).bindPopup(popup);
+            createMarker(data[i]);
         }
 
     });
 
 }
+
+// adding and removing markers
+var markers = []
+function createMarker(markerData, open = false) {
+
+    // defining data
+
+    var coords = [-markerData['coordZ'], markerData['coordX']];
+    var icon = new blockIcon({ iconUrl: markerData['icon_url'] });
+
+    var popup = '<h4>' + markerData['title'] + '</h4>';
+    popup += '<h6><i class="fas fa-map-marker-alt"></i> Coordenadas:</h6>';
+    popup += '<p>X: ' + markerData['coordX'];
+    if (markerData['coordY']) {
+        popup += '<br>Y: ' + markerData['coordY'];  
+    }
+
+    popup += '<br>Z: ' + markerData['coordZ'] + '</p>';
+
+    if (markerData['comment'] != null) {
+        popup += '<h6><i class="fas fa-comment-dots"></i> Comentários:</h6>';
+        popup += '<p>' + markerData['comment'] + '</p>';
+    }
+
+    popup += '<button onclick="editPlace(this)" class="editPlace btn btn-secondary btn-sm" data-placeId="' + markerData['id'] + '"><i class="fas fa-edit"></i> Editar</button>';
+
+    // actually adding marker to map
+
+    myMarker = L.marker(coords, { icon: icon });
+    myMarker._id = markerData['id'];
+
+    mcMap.addLayer(myMarker);
+    markers.push(myMarker);
+
+    if (open == true) {
+        var myPopup = myMarker.bindPopup(popup).openPopup();
+    } else {
+        var myPopup = myMarker.bindPopup(popup);
+    }
+}
+
+function clearMarker(id) {
+    //console.log(markers)
+    var new_markers = []
+    markers.forEach(function (marker) {
+        if (marker._id == id) mcMap.removeLayer(marker)
+        else new_markers.push(marker)
+    })
+    markers = new_markers
+}
+
+
 
 // icons
 var blockIcon = L.Icon.extend({
