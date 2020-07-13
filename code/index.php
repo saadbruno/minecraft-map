@@ -6,8 +6,7 @@ session_start();
 require_once "lib/functions.php";
 require_once "lib/view_functions.php";
 require_once "lib/db/db_conn.php";
-require_once "lib/db/getUser.php";
-require_once "lib/db/submit.php";
+require_once "lib/db/db_management.php";
 
 
 
@@ -27,11 +26,12 @@ $meta['description'] = 'Mapa de coordenadas do servidor do Minecraft do Clã Req
 $meta['image'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_ENV['DOMAIN_NAME'] . '/public/media/img/og-thumbnail.jpg';
 $meta['url'] = $_SERVER['REQUEST_SCHEME'] . '://' . $_ENV['DOMAIN_NAME'] . $_SERVER['REQUEST_URI'];
 
-// GET variables
-// $p = preg_replace('/[^0-9]/', '', filter_input(INPUT_GET, 'p', FILTER_SANITIZE_NUMBER_INT));
-// $p = $p ? $p : 1;
 
 switch ($_GET['q1']) {
+
+    case 'api':
+        require_once("./features/api/api.php");
+        break;
 
     case 'home':
     default:
@@ -42,7 +42,7 @@ switch ($_GET['q1']) {
 }
 
 // debugging
-debug($_GET, 'GET');
+//debug($_GET, 'GET');
 // debug($_ENV, 'ENV');
 // debug($_POST, 'POST');
 // debug($db_status, 'DB status');
