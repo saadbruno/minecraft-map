@@ -170,7 +170,7 @@ function getPlaces(clear = false) {
 // icons
 var blockIcon = L.Icon.extend({
     options: {
-        iconSize: [30, 30],
+        iconSize: [30, -1],
         iconAnchor: [15, 15],
         popupAnchor: [0, -15]
     }
