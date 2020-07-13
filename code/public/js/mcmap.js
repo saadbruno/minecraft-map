@@ -85,15 +85,48 @@ $('#submit-form').on('submit', function (e) {
 // ================
 
 
-window.onload = function () {
+// Gets all the places via ajax, and loops through each, adding markers to the map
+function getPlaces(clear = false) {
 
-    // var overworldMap = drawMap('overworld');
-    getPlaces();
-};
+    if (clear == true) {
+        // let's first remove all current markers
+        markers.clearLayers();
+    }
 
+    $.getJSON("/api/places/overworld", function (data, status) {
+        console.log(data);
+        console.log(data[1]['title']);
+
+        var i;
+        for (i = 0; i < data.length; i++) {
+
+            // defines marker data
+            // in minecraft, north is towards negative Z, so we have to invert it
+
+            var coords = [-data[i]['coordZ'], data[i]['coordX']];
+            var icon = new blockIcon({ iconUrl: data[i]['icon_url'] });
+
+            var popup = '<h4>' + data[i]['title'] + '</h4>';
+            popup += '<h6><i class="fas fa-map-marker-alt"></i> Coordenadas:</h6>';
+            popup += '<p>X: ' + data[i]['coordX'];
+            popup += '<br>Y: ' + data[i]['coordY'];
+            popup += '<br>Z: ' + data[i]['coordZ'] + '</p>';
+
+            if (data[i]['comment'] != null) {
+                popup += '<h6><i class="fas fa-comment-dots"></i> Comentários:</h6>';
+                popup += data[i]['comment'];
+            }
+
+            // creates marker
+
+            var marker = L.marker(coords, { icon: icon }).addTo(mcMap).bindPopup(popup);
+        }
+
+    });
+
+}
 
 // icons
-
 var blockIcon = L.Icon.extend({
     options: {
         iconSize: [30, 30],
@@ -102,10 +135,7 @@ var blockIcon = L.Icon.extend({
     }
 });
 
-
 // // Overworld map
-
-
 var mcMap = L.map('overworld', {
     crs: L.CRS.Simple,
     minZoom: -5
@@ -127,44 +157,8 @@ mapAxis.onAdd = function (mcMap) {
 }
 mapAxis.addTo(mcMap);
 
+window.onload = function () {
 
-// Gets all the places via ajax, and loops through each, adding markers to the map
-function getPlaces(clear = false) {
-
-    if (clear == true) {
-        // let's first remove all current markers
-        markers.clearLayers();
-    }
-
-    $.getJSON("/api/places/overworld", function (data, status) {
-        console.log(data);
-        console.log(data[1]['title']);
-
-        var i;
-        for (i = 0; i < data.length; i++) {
-
-            // defines marker data
-            // in minecraft, north is towards negative Z, so we have to invert it
-
-            var coords = [-data[i]['coordZ'], data[i]['coordX']];
-            var icon = new blockIcon({ iconUrl: data[i]['icon'] });
-
-            var popup = '<h4>' + data[i]['title'] + '</h4>';
-            popup += '<h6><i class="fas fa-map-marker-alt"></i> Coordenadas:</h6>';
-            popup += '<p>X: ' + data[i]['coordX'];
-            popup += '<br>Y: ' + data[i]['coordY'];
-            popup += '<br>Z: ' + data[i]['coordZ'] + '</p>';
-
-            if (data[i]['comment'] != null) {
-                popup += '<h6><i class="fas fa-comment-dots"></i> Comentários:</h6>';
-                popup += data[i]['comment'];
-            }
-
-            // creates marker
-
-            var marker = L.marker(coords, { icon: icon }).addTo(mcMap).bindPopup(popup);
-        }
-
-    });
-
-}
+    // var overworldMap = drawMap('overworld');
+    getPlaces();
+};

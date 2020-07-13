@@ -5,6 +5,8 @@
 
         <input type="hidden" name="form" value="addPlace">
 
+        <input type="hidden" name="id" value="">
+
         <input type="hidden" name="dimension" value="Overworld">
 
         <!-- name  -->
@@ -13,6 +15,16 @@
             <input class="form-control" name="title" type="text" maxlength="255" placeholder="Ex: Ilha das Flores">
             <div class="invalid-feedback">
             </div>
+        </div>
+
+        <!-- dimension -->
+        <div class="form-group">
+            <label for="icon">Dimensão</label>
+            <select class="form-control" name="icon">
+                <option value='Overworld'>Overworld</option>
+                <option value='Nether'>Nether</option>
+            </select>
+            <div class="invalid-feedback"> </div>
         </div>
 
         <!-- coordinates  -->
@@ -32,6 +44,7 @@
             </div>
         </div>
 
+        <!-- icon  -->
         <div class="form-group">
             <label for="icon">Ícone</label>
             <select class="form-control" name="icon">

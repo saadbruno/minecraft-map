@@ -6,20 +6,20 @@ switch ($_GET['q2']) {
 
         switch ($_GET['q3']) {
             case 'overworld':
-
+            case 'Overworld':
 
                 $places =  getPlaces('Overworld');
-
                 //debug($icons, 'ICONS');
-
                 header('Content-Type: application/json');
                 echo json_encode($places);
 
                 break;
 
             default:
-                echo 'please provide a dimension';
-                break;
+                $place =  getPlace($_GET['q3']);
+                //debug($icons, 'ICONS');
+                header('Content-Type: application/json');
+                echo json_encode($place);
         }
 
         break;
