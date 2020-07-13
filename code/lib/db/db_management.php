@@ -138,6 +138,15 @@ function savePlace($formData)
   $result = array();
   $result['status'] = 'success';
   $result['message'] = 'success';
+
+  if ($formData['id']) {
+    $result['action'] = 'update';
+  } else {
+    $result['action'] = 'insert';
+  }
+
+  $result['id'] = $pdo->lastInsertId();
+
   header('Content-Type: application/json; charset=UTF-8');
   echo json_encode($result, true);
 
