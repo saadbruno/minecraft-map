@@ -36,8 +36,8 @@ services:
     mysql:
         container_name: mcmap_mysql
         image: mysql:8.0.16
-        expose:
-            - "3306"
+        ports:
+            - "3307:3306"
         volumes:
             - ../mysql:/var/lib/mysql
         env_file: .env

@@ -9,10 +9,10 @@
     include_once "partials/nav.php";
     ?>
 
-    <main role="main" class="container">
+    <main role="main" class="container-fluid">
 
         <div class="row">
-            <h1>Hello world!</h1>
+            <div id="overworld" class="mapContainer"></div>
         </div>
 
     </main>
