@@ -1,25 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html class="h-100" lang="en">
 
 <?php include_once "partials/head.php"; ?>
 
-<body>
+<body class="h-100">
 
-    <?php
-    include_once "partials/nav.php";
-    ?>
+    <div class="wrapper d-flex flex-column h-100">
 
-    <main role="main" class="container-fluid">
+        <?php
+        include_once "partials/nav.php";
+        ?>
 
-        <div class="row">
+        <main role="main" class="flex-grow-1">
             <div id="overworld" class="mapContainer"></div>
-        </div>
+        </main>
 
-    </main>
+        <?php
+        // nclude_once "partials/footer.php";
+        ?>
 
+    </div>
 
     <?php
-    include_once "partials/footer.php";
     include_once "partials/bottom.php";
     ?>
 
