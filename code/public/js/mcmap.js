@@ -82,6 +82,7 @@ function resetForm(formId) {
     // console.log('resetting form ' + formId);
     document.forms[formId].reset();
     $('#' + formId).find('textarea[name="comment"]').html('').val('');
+    $('#' + formId).find('input[name="id"]').val('');
     $('#' + formId).find('.is-invalid').removeClass('is-invalid');
 }
 
