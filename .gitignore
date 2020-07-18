@@ -6,3 +6,6 @@
 /.env
 
 /code/public/styles/*.css
+
+/code/public/minedmap/data/*
+!/code/public/minedmap/data/.gitignore

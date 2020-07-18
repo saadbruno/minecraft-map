@@ -9,6 +9,8 @@ services:
         build:
             context: ../
             dockerfile: docker/nginx/prod/Dockerfile
+        volumes:
+            - ../code/public/minedmap/data:/var/www/code/public/minedmap/data
         networks:
             - proxy.mcmap
         env_file:

@@ -24,5 +24,9 @@ Aside from that is pretty much the same process:
 - Import the DB schema with `make import-schema` (might need to change the password for this one)
 - Traefik should automatically install the SSL certificates
 
+### Minedmap:
+This system supports [Minedmap](https://github.com/NeoRaider/MinedMap) to insert background tiles. To do it, just place your minedmap export data into `/code/public/minedmap/data` and it should load automatically.
+
 ## Links:
-[Docker LEMP stack](https://github.com/cvaclav/docker-lemp-stack)
+- [Docker LEMP stack](https://github.com/cvaclav/docker-lemp-stack)
+- [Minedmap](https://github.com/NeoRaider/MinedMap)
