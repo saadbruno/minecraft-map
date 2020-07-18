@@ -142,6 +142,35 @@ function getPlaces(clear = false) {
 
 }
 
+function getMinedMapTiles() {
+    // console.log('getting minedmap tiles');
+
+    var xhr = new XMLHttpRequest();
+	xhr.onload = function () {
+		var res = JSON.parse(this.responseText),
+		    mipmaps = res.mipmaps,
+		    spawn = res.spawn;
+
+        // console.log('res');
+        // console.log(res);
+
+        // console.log('mipmaps');
+        // console.log(mipmaps);
+
+
+		var mapLayer = new MinedMapLayer(mipmaps, 'map');
+
+		mapLayer.addTo(mcMap);
+
+        // console.log(mapLayer);
+
+	};
+
+	xhr.open('GET', '/public/minedmap/data/info.json', true);
+	xhr.send();
+
+}
+
 // adding and removing markers
 var markers = []
 function createMarker(markerData, open = false) {
@@ -214,8 +243,8 @@ var bounds = [[-5000, -5000], [5000, 5000]];
 var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap);
 
 
-var bounds = [[-470, -370], [397, 977]];
-var image = L.imageOverlay('/public/media/img/map/overworld1.jpg', bounds, {opacity: 0.3, zIndex: -1 }).addTo(mcMap);
+// var bounds = [[-470, -370], [397, 977]];
+// var image = L.imageOverlay('/public/media/img/map/overworld1.jpg', bounds, {opacity: 0.3, zIndex: -1 }).addTo(mcMap);
 
 
 mcMap.setView([0, 500], -1);
@@ -235,4 +264,5 @@ window.onload = function () {
 
     // var overworldMap = drawMap('overworld');
     getPlaces();
+    getMinedMapTiles();
 };
