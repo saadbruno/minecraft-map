@@ -102,7 +102,7 @@ var MinedMapLayer = L.GridLayer.extend({
 
 var CoordControl = L.Control.extend({
 	initialize: function () {
-		this.options.position = 'bottomleft';
+		this.options.position = 'topright';
 	},
 
 	onAdd: function (map) {

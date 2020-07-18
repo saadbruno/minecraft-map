@@ -1,4 +1,4 @@
-<footer class="footer mt-auto py-4">
+<footer class="footer">
     <div class="container">
         <span class="text-muted">
             Footer!

@@ -246,13 +246,25 @@ var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap
 // var bounds = [[-470, -370], [397, 977]];
 // var image = L.imageOverlay('/public/media/img/map/overworld1.jpg', bounds, {opacity: 0.3, zIndex: -1 }).addTo(mcMap);
 
-
+// sets map view
 mcMap.setView([0, 500], -1);
 
-L.control.scale({ imperial: false }).addTo(mcMap);
-// adds the XZ map axis to the bottom left of the map 
+// adds coordinates UI
+var coordControl = new CoordControl();
+coordControl.addTo(mcMap);
 
+mcMap.on('mousemove', function(e) {
+    coordControl.update(Math.round(e.latlng.lng), Math.round(-e.latlng.lat));
+});
+
+console.log(coordControl);
+
+// adds scale UI to bottom left
+L.control.scale({ imperial: false }).addTo(mcMap);
+
+// adds the XZ map axis to the bottom left of the map 
 var mapAxis = L.control({ position: "bottomleft" });
+
 mapAxis.onAdd = function (mcMap) {
     var div = L.DomUtil.create("div", "info legend");
     div.innerHTML = '<img class="mapAxis" src="/public/media/img/axis.svg">';
