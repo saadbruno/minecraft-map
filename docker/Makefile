@@ -118,7 +118,7 @@ redeploy-php-prod: build-php-prod stop-php-prod clean run-php-prod
 redeploy-web-prod: redeploy-prod
 
 backup-mysql-prod:
-	docker exec -it mcmap_mysql mysqldump -u admin -p$(P) mcmap | tail -n +2 > ./mysql/backup/mcmap_restore.sql;  cp ./mysql/backup/mcmap_restore.sql ./mysql/backup/mcmap_backup_`date +%Y%m%d_%H%M%S`.sql
+	docker exec mcmap_mysql mysqldump -u admin -p$(P) mcmap | tail -n +2 > ./mysql/backup/mcmap_restore.sql;  cp ./mysql/backup/mcmap_restore.sql ./mysql/backup/mcmap_backup_`date +%Y%m%d_%H%M%S`.sql
 restore-mysql-prod:
 	cat ./mysql/backup/mcmap_restore.sql | docker exec -i mcmap_mysql mysql -u admin -p$(P) mcmap 
 
