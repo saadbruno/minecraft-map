@@ -14,21 +14,29 @@ $(function () {
 $('.dimension-item').click(function(e) {
     e.preventDefault();
 
-    // UI Stuff. Updates the menu and the browser URL
-    $('.dimension-item').each(function(i, obj) {
-        $(obj).removeClass('active');
-    });
 
     $(this).addClass('active');
 
     dimension = $(this).children('a').html().toLowerCase();
-    url = $(this).children('a').attr('href');
+    switchMap(dimension);
 
-    window.history.pushState(dimension, dimension, url);
 
-    // loads / unloads specific maps depending on the selected button
+  });
+
+function switchMap(dimension) {
+
+    // UI Stuff. Updates the menu and the browser URL
+    $('.dimension-item').each(function (i, obj) {
+        $(obj).removeClass('active');
+    });
+
+
     switch (dimension) {
         case 'nether':
+            $('#nether-menu').addClass('active');
+            window.history.pushState('nether', 'nether', '/nether');
+            currDimension = 'nether';
+
             placesLayers['overworld'].removeFrom(mcMap);
             tilesLayer['overworld'].removeFrom(mcMap);
             placesLayers['nether'].addTo(mcMap);
@@ -36,13 +44,16 @@ $('.dimension-item').click(function(e) {
     
         case 'overworld':
         default:
+            $('#overworld-menu').addClass('active');
+            window.history.pushState('overworld', 'overworld', '/');
+            currDimension = 'overworld';
+
             placesLayers['overworld'].addTo(mcMap);
             tilesLayer['overworld'].addTo(mcMap);
             placesLayers['nether'].removeFrom(mcMap);
             break;
     }
-
-  });
+}
 
 // ================
 // NEW MARKER DROPDOWN
@@ -83,13 +94,20 @@ $('#submit-form').on('submit', function (e) {
                 } else {
                     $.getJSON("/api/places/" + data.id, function (newMarker, status) {
 
+                        var dimension = newMarker['dimension'].toLowerCase();
+
+                        // UI. Changes the map we're currently seeing
+                        if (currDimension != dimension) {
+                            switchMap(dimension);
+                        }
+                        console.log(formData);
                         // deletes the old marker if it was an update
                         if (data.action == 'update') {
                             clearMarker(data.id);
                         }
 
                         // creates a new marker, with the popup open
-                        createMarker(newMarker, true);
+                        createMarker(newMarker, true, dimension);
 
                         // moves map view to the submitted thing
                         var coords = [-newMarker['coordZ'], newMarker['coordX']];
@@ -282,18 +300,24 @@ function createMarker(markerData, open = false, dimension = 'overworld') {
         var myPopup = myMarker.bindPopup(popup);
     }
 
+    markers.push(myMarker);
     return myMarker;
     // mcMap.addLayer(myMarker);
-    // markers.push(myMarker);
+    
 
 }
 
-function clearMarker(id) {
+function clearMarker(id, dimension) {
     //console.log(markers)
+
     var new_markers = []
     markers.forEach(function (marker) {
-        if (marker._id == id) mcMap.removeLayer(marker)
-        else new_markers.push(marker)
+        if (marker._id == id) {
+            marker.removeFrom(placesLayers['overworld']);
+            marker.removeFrom(placesLayers['nether']);
+        } else  {
+            new_markers.push(marker);
+        }
     })
     markers = new_markers
 }
@@ -352,18 +376,22 @@ mapAxis.addTo(mcMap);
 
 // var layerControl = L.control.layers().addTo(mcMap);
 
-
+var currDimension;
 window.onload = function () {
 
     var pathArray = window.location.pathname.split('/');
     //console.log (pathArray);
 
+
+
     // if it's /nether, we hide the overworld stuff. otherwise, do the opposite
     if (pathArray[1] == 'nether') {
+        currDimension = 'nether';
         getPlaces(false, 'overworld', true);
         getPlaces(false, 'nether', false);
         getMinedMapTiles('overworld', true);
     } else {
+        currDimension = 'overworld';
         getPlaces(false, 'overworld');
         getPlaces(false, 'nether', true);
         getMinedMapTiles('overworld', false);

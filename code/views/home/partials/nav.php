@@ -9,11 +9,11 @@
     <!-- menu  -->
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul id="dimension-menu" class="navbar-nav mr-auto">
-            <li class="dimension-item nav-item <?= $nav['active'] == 'overworld' ? 'active' : '' ?>">
+            <li id="overworld-menu" class="dimension-item nav-item <?= $nav['active'] == 'overworld' ? 'active' : '' ?>">
                 <a class="nav-link" href="/">Overworld</a>
             </li>
 
-            <li class="dimension-item nav-item <?= $nav['active'] == 'nether' ? 'active' : '' ?>">
+            <li id="nether-menu" class="dimension-item nav-item <?= $nav['active'] == 'nether' ? 'active' : '' ?>">
                 <a class="nav-link" href="/nether">Nether</a>
             </li>
         </ul>
