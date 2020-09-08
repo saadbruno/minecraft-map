@@ -9,7 +9,17 @@ switch ($_GET['q2']) {
             case 'Overworld':
 
                 $places =  getPlaces('Overworld');
-                //debug($icons, 'ICONS');
+                // debug($places, 'PLACES');
+                header('Content-Type: application/json');
+                echo json_encode($places);
+
+                break;
+
+            case 'nether':
+            case 'Nether':
+
+                $places =  getPlaces('Nether');
+                // debug($places, 'PLACES');
                 header('Content-Type: application/json');
                 echo json_encode($places);
 

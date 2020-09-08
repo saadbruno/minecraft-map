@@ -202,14 +202,15 @@ function createMarker(markerData, open = false) {
     myMarker = L.marker(coords, { icon: icon });
     myMarker._id = markerData['id'];
 
-    mcMap.addLayer(myMarker);
-    markers.push(myMarker);
+    return myMarker;
+    // mcMap.addLayer(myMarker);
+    // markers.push(myMarker);
 
-    if (open == true) {
-        var myPopup = myMarker.bindPopup(popup).openPopup();
-    } else {
-        var myPopup = myMarker.bindPopup(popup);
-    }
+    // if (open == true) {
+    //     var myPopup = myMarker.bindPopup(popup).openPopup();
+    // } else {
+    //     var myPopup = myMarker.bindPopup(popup);
+    // }
 }
 
 function clearMarker(id) {
