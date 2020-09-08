@@ -33,9 +33,15 @@ switch ($_GET['q1']) {
         require_once("./features/api/api.php");
         break;
 
+    case 'nether':
+        $nav['active'] = 'nether';
+        require_once("./features/home/home.php");
+        break;
+
     case 'home':
     default:
 
+        $nav['active'] = 'overworld';
         require_once("./features/home/home.php");
 
         break;

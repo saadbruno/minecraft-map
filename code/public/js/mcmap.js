@@ -1,7 +1,63 @@
+// ================
+// GENERAL STUFF
+// ================
+
 // bootstrap tooltips
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
+
+// ================
+// NAV MENU
+// ================
+
+$('.dimension-item').click(function(e) {
+    e.preventDefault();
+
+
+    $(this).addClass('active');
+
+    dimension = $(this).children('a').html().toLowerCase();
+    switchMap(dimension);
+
+
+  });
+
+function switchMap(dimension) {
+
+    // UI Stuff. Updates the menu and the browser URL
+    $('.dimension-item').each(function (i, obj) {
+        $(obj).removeClass('active');
+    });
+
+
+    switch (dimension) {
+        case 'nether':
+            $('#nether-menu').addClass('active');
+            window.history.pushState('nether', 'nether', '/nether');
+            currDimension = 'nether';
+
+            placesLayers['overworld'].removeFrom(mcMap);
+            tilesLayer['overworld'].removeFrom(mcMap);
+            placesLayers['nether'].addTo(mcMap);
+            break;
+    
+        case 'overworld':
+        default:
+            $('#overworld-menu').addClass('active');
+            window.history.pushState('overworld', 'overworld', '/');
+            currDimension = 'overworld';
+
+            placesLayers['overworld'].addTo(mcMap);
+            tilesLayer['overworld'].addTo(mcMap);
+            placesLayers['nether'].removeFrom(mcMap);
+            break;
+    }
+}
+
+// ================
+// NEW MARKER DROPDOWN
+// ================
 
 // let's reset the dropdown form every time the dropdown is hidden, to prevent accidentally editing an existing place
 $('#submitFormDropdown').on('hidden.bs.dropdown', function () {
@@ -38,13 +94,20 @@ $('#submit-form').on('submit', function (e) {
                 } else {
                     $.getJSON("/api/places/" + data.id, function (newMarker, status) {
 
+                        var dimension = newMarker['dimension'].toLowerCase();
+
+                        // UI. Changes the map we're currently seeing
+                        if (currDimension != dimension) {
+                            switchMap(dimension);
+                        }
+                        
                         // deletes the old marker if it was an update
                         if (data.action == 'update') {
                             clearMarker(data.id);
                         }
 
                         // creates a new marker, with the popup open
-                        createMarker(newMarker, true);
+                        createMarker(newMarker, true, dimension);
 
                         // moves map view to the submitted thing
                         var coords = [-newMarker['coordZ'], newMarker['coordX']];
@@ -122,28 +185,52 @@ function editPlace(btn) {
 
 
 // Gets all the places via ajax, and loops through each, adding markers to the map
-function getPlaces(clear = false) {
+var placesLayers = [];
+function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
+
+    // defines a global level variable with the layer group
+    placesLayers[dimension] = L.layerGroup();
 
     if (clear == true) {
         // let's first remove all current markers
         markers.clearLayers();
     }
 
-    $.getJSON("/api/places/overworld", function (data, status) {
+    switch (dimension) {
+        case 'nether':
+            var apiUrl = '/api/places/nether';
+            break;
+    
+        case 'overworld':
+        default:
+            var apiUrl = '/api/places/overworld';
+            break;
+    }
+
+    $.getJSON(apiUrl, function (data, status) {
         // console.log(data);
         // console.log(data[1]['title']);
 
+        var tempMarkers = [];
         var i;
         for (i = 0; i < data.length; i++) {
 
-            createMarker(data[i]);
+            tempMarkers.push( createMarker(data[i], false, dimension) );
         }
 
+        // Creates checkbox in the control menu
+        // layerControl.addOverlay(placesLayers[dimension], dimension + 'Places');
+
+        // if not hidden, add it to the map right away
+        if (hidden == false) {
+            placesLayers[dimension].addTo(mcMap);    
+        }
     });
 
 }
 
-function getMinedMapTiles() {
+var tilesLayer = [];
+function getMinedMapTiles(dimension = 'overworld', hidden = false) {
     // console.log('getting minedmap tiles');
 
     var xhr = new XMLHttpRequest();
@@ -159,11 +246,16 @@ function getMinedMapTiles() {
         // console.log(mipmaps);
 
 
-		var mapLayer = new MinedMapLayer(mipmaps, 'map');
+		tilesLayer[dimension] = new MinedMapLayer(mipmaps, 'map');
 
-		mapLayer.addTo(mcMap);
+        //mcMap.addLayer(tilesLayer[dimension]);
+        // layerControl.addOverlay(tilesLayer[dimension], dimension + 'Tiles');
+        // console.log(tilesLayer);
 
-        // console.log(mapLayer);
+        // if not hidden, add it to the map right away
+        if (hidden == false) {
+            tilesLayer[dimension].addTo(mcMap); 
+        }
 
 	};
 
@@ -174,7 +266,7 @@ function getMinedMapTiles() {
 
 // adding and removing markers
 var markers = []
-function createMarker(markerData, open = false) {
+function createMarker(markerData, open = false, dimension = 'overworld') {
 
     // defining data
 
@@ -199,25 +291,33 @@ function createMarker(markerData, open = false) {
 
     // actually adding marker to map
 
-    myMarker = L.marker(coords, { icon: icon });
+    myMarker = L.marker(coords, { icon: icon }).addTo(placesLayers[dimension]);
     myMarker._id = markerData['id'];
-
-    mcMap.addLayer(myMarker);
-    markers.push(myMarker);
 
     if (open == true) {
         var myPopup = myMarker.bindPopup(popup).openPopup();
     } else {
         var myPopup = myMarker.bindPopup(popup);
     }
+
+    markers.push(myMarker);
+    return myMarker;
+    // mcMap.addLayer(myMarker);
+    
+
 }
 
-function clearMarker(id) {
+function clearMarker(id, dimension) {
     //console.log(markers)
+
     var new_markers = []
     markers.forEach(function (marker) {
-        if (marker._id == id) mcMap.removeLayer(marker)
-        else new_markers.push(marker)
+        if (marker._id == id) {
+            marker.removeFrom(placesLayers['overworld']);
+            marker.removeFrom(placesLayers['nether']);
+        } else  {
+            new_markers.push(marker);
+        }
     })
     markers = new_markers
 }
@@ -258,7 +358,7 @@ mcMap.on('mousemove', function(e) {
     coordControl.update(Math.round(e.latlng.lng), Math.round(-e.latlng.lat));
 });
 
-console.log(coordControl);
+//console.log(coordControl);
 
 // adds scale UI to bottom left
 L.control.scale({ imperial: false }).addTo(mcMap);
@@ -273,9 +373,28 @@ mapAxis.onAdd = function (mcMap) {
 }
 mapAxis.addTo(mcMap);
 
+
+// var layerControl = L.control.layers().addTo(mcMap);
+
+var currDimension;
 window.onload = function () {
 
-    // var overworldMap = drawMap('overworld');
-    getPlaces();
-    getMinedMapTiles();
+    var pathArray = window.location.pathname.split('/');
+    //console.log (pathArray);
+
+
+
+    // if it's /nether, we hide the overworld stuff. otherwise, do the opposite
+    if (pathArray[1] == 'nether') {
+        currDimension = 'nether';
+        getPlaces(false, 'overworld', true);
+        getPlaces(false, 'nether', false);
+        getMinedMapTiles('overworld', true);
+    } else {
+        currDimension = 'overworld';
+        getPlaces(false, 'overworld');
+        getPlaces(false, 'nether', true);
+        getMinedMapTiles('overworld', false);
+    }
+
 };
