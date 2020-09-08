@@ -8,12 +8,12 @@
 
     <!-- menu  -->
     <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item <?= $nav['active'] == 'overworld' ? 'active' : '' ?>">
+        <ul id="dimension-menu" class="navbar-nav mr-auto">
+            <li class="dimension-item nav-item <?= $nav['active'] == 'overworld' ? 'active' : '' ?>">
                 <a class="nav-link" href="/">Overworld</a>
             </li>
 
-            <li class="nav-item <?= $nav['active'] == 'nether' ? 'active' : '' ?>">
+            <li class="dimension-item nav-item <?= $nav['active'] == 'nether' ? 'active' : '' ?>">
                 <a class="nav-link" href="/nether">Nether</a>
             </li>
         </ul>

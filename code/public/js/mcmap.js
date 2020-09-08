@@ -1,7 +1,52 @@
+// ================
+// GENERAL STUFF
+// ================
+
 // bootstrap tooltips
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
+
+// ================
+// NAV MENU
+// ================
+
+$('.dimension-item').click(function(e) {
+    e.preventDefault();
+
+    // UI Stuff. Updates the menu and the browser URL
+    $('.dimension-item').each(function(i, obj) {
+        $(obj).removeClass('active');
+    });
+
+    $(this).addClass('active');
+
+    dimension = $(this).children('a').html().toLowerCase();
+    url = $(this).children('a').attr('href');
+
+    window.history.pushState(dimension, dimension, url);
+
+    // loads / unloads specific maps depending on the selected button
+    switch (dimension) {
+        case 'nether':
+            placesLayers['overworld'].removeFrom(mcMap);
+            tilesLayer['overworld'].removeFrom(mcMap);
+            placesLayers['nether'].addTo(mcMap);
+            break;
+    
+        case 'overworld':
+        default:
+            placesLayers['overworld'].addTo(mcMap);
+            tilesLayer['overworld'].addTo(mcMap);
+            placesLayers['nether'].removeFrom(mcMap);
+            break;
+    }
+
+  });
+
+// ================
+// NEW MARKER DROPDOWN
+// ================
 
 // let's reset the dropdown form every time the dropdown is hidden, to prevent accidentally editing an existing place
 $('#submitFormDropdown').on('hidden.bs.dropdown', function () {
@@ -156,7 +201,7 @@ function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
         }
 
         // Creates checkbox in the control menu
-        layerControl.addOverlay(placesLayers[dimension], dimension + 'Places');
+        // layerControl.addOverlay(placesLayers[dimension], dimension + 'Places');
 
         // if not hidden, add it to the map right away
         if (hidden == false) {
@@ -186,7 +231,7 @@ function getMinedMapTiles(dimension = 'overworld', hidden = false) {
 		tilesLayer[dimension] = new MinedMapLayer(mipmaps, 'map');
 
         //mcMap.addLayer(tilesLayer[dimension]);
-        layerControl.addOverlay(tilesLayer[dimension], dimension + 'Tiles');
+        // layerControl.addOverlay(tilesLayer[dimension], dimension + 'Tiles');
         // console.log(tilesLayer);
 
         // if not hidden, add it to the map right away
@@ -305,14 +350,23 @@ mapAxis.onAdd = function (mcMap) {
 mapAxis.addTo(mcMap);
 
 
-var layerControl = L.control.layers().addTo(mcMap);
+// var layerControl = L.control.layers().addTo(mcMap);
 
 
 window.onload = function () {
 
-    // var overworldMap = drawMap('overworld');
-    getPlaces(false, 'overworld');
-    getPlaces(false, 'nether', true);
-    getMinedMapTiles('overworld', false);
+    var pathArray = window.location.pathname.split('/');
+    //console.log (pathArray);
+
+    // if it's /nether, we hide the overworld stuff. otherwise, do the opposite
+    if (pathArray[1] == 'nether') {
+        getPlaces(false, 'overworld', true);
+        getPlaces(false, 'nether', false);
+        getMinedMapTiles('overworld', true);
+    } else {
+        getPlaces(false, 'overworld');
+        getPlaces(false, 'nether', true);
+        getMinedMapTiles('overworld', false);
+    }
 
 };
