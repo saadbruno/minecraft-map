@@ -166,8 +166,8 @@ function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
 
 }
 
-var mapLayer = [];
-function getMinedMapTiles(dimension = 'overworld') {
+var tilesLayer = [];
+function getMinedMapTiles(dimension = 'overworld', hidden = false) {
     // console.log('getting minedmap tiles');
 
     var xhr = new XMLHttpRequest();
@@ -183,12 +183,16 @@ function getMinedMapTiles(dimension = 'overworld') {
         // console.log(mipmaps);
 
 
-		mapLayer[dimension] = new MinedMapLayer(mipmaps, 'map');
+		tilesLayer[dimension] = new MinedMapLayer(mipmaps, 'map');
 
-		mapLayer[dimension].addTo(mcMap);
-        mcMap.addLayer(mapLayer[dimension]);
-        layerControl.addOverlay(mapLayer[dimension], dimension + 'Tiles');
-        // console.log(mapLayer);
+        //mcMap.addLayer(tilesLayer[dimension]);
+        layerControl.addOverlay(tilesLayer[dimension], dimension + 'Tiles');
+        // console.log(tilesLayer);
+
+        // if not hidden, add it to the map right away
+        if (hidden == false) {
+            tilesLayer[dimension].addTo(mcMap); 
+        }
 
 	};
 
@@ -300,16 +304,8 @@ mapAxis.onAdd = function (mcMap) {
 }
 mapAxis.addTo(mcMap);
 
-// LAYERS
-var baseLayers = {
-    //"Overworld": testLayerTemp
-};
 
-var overlays = {
-    //"Ícones": testLayerTemp
-};
-
-var layerControl = L.control.layers(baseLayers, overlays).addTo(mcMap);
+var layerControl = L.control.layers().addTo(mcMap);
 
 
 window.onload = function () {
@@ -317,5 +313,6 @@ window.onload = function () {
     // var overworldMap = drawMap('overworld');
     getPlaces(false, 'overworld');
     getPlaces(false, 'nether', true);
-    getMinedMapTiles();
+    getMinedMapTiles('overworld', false);
+
 };

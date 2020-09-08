@@ -14,7 +14,6 @@ if ($_POST['form'] == 'addPlace') {
 }
 
 
-$nav['active'] = 'overworld';
 
 $iconList = getIcons();
 
