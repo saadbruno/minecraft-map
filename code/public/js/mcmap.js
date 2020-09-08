@@ -100,7 +100,7 @@ $('#submit-form').on('submit', function (e) {
                         if (currDimension != dimension) {
                             switchMap(dimension);
                         }
-                        console.log(formData);
+                        
                         // deletes the old marker if it was an update
                         if (data.action == 'update') {
                             clearMarker(data.id);

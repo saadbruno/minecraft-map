@@ -190,6 +190,87 @@ function findTimeAgo($past, $now = "now", $length = "long")
     }
 }
 
+// Discord dwebhook, ref: https://gist.github.com/Mo45/cb0813cb8a6ebcd6524f6a36d4f8862c
+function sendDiscordWebhook($action = "add", $id, $thumb, $title, $description, $dimension, $coords)
+{
+    $username = "Mapa do Requeijão";
+    $footer = $_ENV['DOMAIN_NAME'];
+    $avatar = $_SERVER['REQUEST_SCHEME'] . '://' . $_ENV['DOMAIN_NAME'] . "/public/media/img/logo/avatar.png?v=" . $_ENV['VERSION'];
+
+    if ($id) {
+        $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_ENV['DOMAIN_NAME'] . "/?p=" . $id;
+    } else {
+        $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_ENV['DOMAIN_NAME'];
+    }
+
+    switch ($action) {
+        case 'update':
+            $content = 'Localização no mapa atualizada';
+            break;
+
+        case 'add':
+        default:
+            $content = 'Nova marcação no mapa!';
+            break;
+    }
+
+    $json_data = json_encode([
+
+        "username" => $username,
+        "avatar_url" => $avatar,
+        "content" => $content,
+
+        "embeds" => [
+            [
+                "title" => $title,
+                "type" => "rich",
+                "description" => $description,
+                "url" => $url,
+                "color" => hexdec("2993cf"),
+                "footer" => [
+                    "text" => $footer,
+                ],
+                "thumbnail" => [
+                    "url" => $thumb
+                ],
+                // // if we ever add users
+                // "author" => [
+                //     "name" => $author,
+                //     "url" => $url
+                // ],
+
+                "fields" => [
+                    [
+                        "name" => "Dimensão",
+                        "value" => $dimension,
+                        "inline" => false
+                    ],
+                    [
+                        "name" => "Coordenadas",
+                        "value" => $coords,
+                        "inline" => false
+                    ]
+                ]
+            ]
+        ]
+
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+
+    $ch = curl_init($_ENV['DISCORD_WEBHOOK']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $response = curl_exec($ch);
+    // If you need to debug, or find out why you can't send message uncomment line below, and execute script.
+    // echo $response;
+    curl_close($ch);
+}
+
 //Logging to terminal
 // this requires the "DEBUG=1" in the /docker/.env file
 // messages here will be readable by running `make logs-php`

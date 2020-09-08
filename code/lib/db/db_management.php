@@ -43,6 +43,25 @@ function getIcons()
     return $result;
 }
 
+function getIcon($id)
+{
+    global $pdo;
+
+    if (!$id) {
+        $result['status'] = 'error';
+        $result['message'] = 'Please provide am icon id';
+        return $result;
+    }
+
+    // get single place
+    $stmt = $pdo->prepare("SELECT * FROM mcmap.icons WHERE `published` = 1 AND id = ?");
+    $stmt->execute([$id]);
+    $result = $stmt->fetch();
+
+    return $result;
+
+}
+
 function savePlace($formData)
 {
     global $pdo;
@@ -147,6 +166,30 @@ function savePlace($formData)
 
   $result['id'] = $pdo->lastInsertId();
 
+// =============
+// Discord webhook stuff
+// =============
+
+  // we need to get the icon URL form the database lul
+  $iconData = getIcon($formData['icon']);
+
+  // let's format the coords:
+  $coords = "**X:** " . $formData['coordX'];
+  if ($formData['coordY']) {
+      $coords .= " | **Y:** " . $formData['coordY'];
+  }
+  $coords .= " | **Z:** " . $formData['coordZ'];
+
+  if ($result['action'] == 'update') {
+    sendDiscordWebhook("update", $result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords);
+  } else {
+    sendDiscordWebhook("add", $result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords);
+  }
+// =============
+// End Discord Webhook
+// =============
+
+  // sets the header, and finishes everything
   header('Content-Type: application/json; charset=UTF-8');
   echo json_encode($result, true);
 
