@@ -19,6 +19,21 @@
         </ul>
 
 
+        <!-- layers  -->
+
+        <div class="nav-user ml-md-2 mt-2 mt-md-0">
+            <div id="layersDropdown" class="dropdown">
+
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="layersButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-layer-group"></i> Camadas
+                </button>
+
+                <?php include "layersDropdown.php"; ?>
+
+            </div>
+
+        </div>
+
         <!-- submit  -->
 
         <div class="nav-user ml-md-2 mt-2 mt-md-0">
@@ -31,7 +46,6 @@
                 <?php include "addPlaceDropdown.php"; ?>
 
             </div>
-
 
         </div>
 

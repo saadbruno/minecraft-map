@@ -39,7 +39,12 @@ function switchMap(dimension) {
 
             placesLayers['overworld'].removeFrom(mcMap);
             tilesLayer['overworld'].removeFrom(mcMap);
-            placesLayers['nether'].addTo(mcMap);
+
+            // if visibility is ON, add places to map
+            if (document.getElementById('placesCheckbox').checked == true) {
+                placesLayers['nether'].addTo(mcMap);
+            }
+
             break;
     
         case 'overworld':
@@ -48,12 +53,55 @@ function switchMap(dimension) {
             window.history.pushState('overworld', 'overworld', '/');
             currDimension = 'overworld';
 
-            placesLayers['overworld'].addTo(mcMap);
-            tilesLayer['overworld'].addTo(mcMap);
+            // removes nether places from the map
             placesLayers['nether'].removeFrom(mcMap);
+
+            // adds tiles (background images)
+            tilesLayer['overworld'].addTo(mcMap);
+            
+            // if visibility is ON, add places to map
+            if (document.getElementById('placesCheckbox').checked == true) {
+                placesLayers['overworld'].addTo(mcMap);
+            }
+
             break;
     }
 }
+
+// visibility filder dropdown for places 
+$('#placesCheckbox').change(function() {
+
+    // When checked
+    if(this.checked) {
+        // adds current dimension's icon to the map
+        switch (currDimension) {
+            case 'nether':
+                placesLayers['nether'].addTo(mcMap);
+                break;
+
+            case 'overworld':
+            default:
+                placesLayers['overworld'].addTo(mcMap);
+                break;
+        }
+
+    // When unchecked
+    } else {
+        // removes current dimension's icon to the map
+        switch (currDimension) {
+            case 'nether':
+                placesLayers['nether'].removeFrom(mcMap);
+                break;
+
+            case 'overworld':
+            default:
+                placesLayers['overworld'].removeFrom(mcMap);
+                break;
+        }
+
+    }
+      
+});
 
 // ================
 // NEW MARKER DROPDOWN
