@@ -6,10 +6,13 @@
         max-height: 40px;
     }
     
+    .dropdown-menu {
+        padding: 0.45rem;
+    }
+
     .submit-dropdown {
         min-width: 100%;
         background-color: var(--gray-2);
-        padding: 0.45rem;
 
         @media (min-width: map-get($grid-breakpoints, "md")) {
             min-width: 25vw;
