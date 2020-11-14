@@ -395,8 +395,6 @@ var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap
 // var bounds = [[-470, -370], [397, 977]];
 // var image = L.imageOverlay('/public/media/img/map/overworld1.jpg', bounds, {opacity: 0.3, zIndex: -1 }).addTo(mcMap);
 
-// sets map view
-mcMap.setView([0, 500], -1);
 
 // adds coordinates UI
 var coordControl = new CoordControl();
@@ -445,4 +443,71 @@ window.onload = function () {
         getMinedMapTiles('overworld', false);
     }
 
+};
+
+// ========
+// HASH funcions. These update the URL on map move, and zoom, in case of a page refresh / sharing links
+// taken partially from the MinedMap.js
+// ========
+var x, z, zoom;
+
+var updateParams = function () {
+    var args = parseHash();
+
+    zoom = parseInt(args['zoom']);
+    x = parseFloat(args['x']);
+    z = parseFloat(args['z']);
+
+    if (isNaN(zoom))
+        zoom = 0;
+    if (isNaN(x))
+        x = 8;
+    if (isNaN(z))
+        z = 230;
+};
+
+updateParams();
+
+// sets map view
+mcMap.setView([-z, x], zoom);
+
+
+var makeHash = function () {
+    var ret = '#x='+x+'&z='+z;
+
+    if (zoom != 0)
+        ret += '&zoom='+zoom;
+
+    return ret;
+};
+
+var updateHash = function () {
+    window.location.hash = makeHash();
+};
+
+var refreshHash = function () {
+    zoom = mcMap.getZoom();
+    center = mcMap.getCenter();
+    x = Math.round(center.lng);
+    z = Math.round(-center.lat);
+
+    updateHash();
+}
+
+updateHash();
+
+mcMap.on('moveend', refreshHash);
+mcMap.on('zoomend', refreshHash);
+mcMap.on('layeradd', refreshHash);
+mcMap.on('layerremove', refreshHash);
+
+window.onhashchange = function () {
+    if (window.location.hash === makeHash())
+        return;
+
+    updateParams();
+
+    mcMap.setView([-z, x], zoom);
+
+    updateHash();
 };
