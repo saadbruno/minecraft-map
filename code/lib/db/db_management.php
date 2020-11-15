@@ -226,6 +226,24 @@ function addUser($discord)
 
 }
 
+function getUser($id)
+{
+  global $pdo;
+
+  if (!$id) {
+      $result['status'] = 'error';
+      $result['message'] = 'Please provide an user ID';
+      return $result;
+  }
+
+  // get single place
+  $stmt = $pdo->prepare("SELECT * FROM `users` WHERE `id` = ?");
+  $stmt->execute([$id]);
+  $result = $stmt->fetch();
+
+  return $result;
+
+}
 
 function checkAuthorizedGuilds($guilds)
 {
@@ -279,4 +297,22 @@ function removeUserFlag($id, $flag)
     debug($e, 'USER FLAG ERROR');
   }
 
+}
+
+function getUserFlags($id)
+{
+    global $pdo;
+
+    // get places
+    $stmt = $pdo->prepare("SELECT `flag` FROM `user_flags` WHERE `id` = ?");
+    $stmt->execute([$id]);
+    $flagsRaw = $stmt->fetchAll();
+
+    $flags = array();
+    foreach ($flagsRaw as $flag) {
+        $flags[] = $flag['flag'];
+    }
+
+
+    return $flags;
 }

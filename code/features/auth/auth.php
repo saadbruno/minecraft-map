@@ -39,6 +39,7 @@ if (get('action') == 'logout') {
         'client_secret' => OAUTH2_CLIENT_SECRET,
     ));
     unset($_SESSION['access_token']);
+    unset($_SESSION['user']);
     header('Location: /auth');
     die();
 }
@@ -82,7 +83,6 @@ if (session('access_token')) {
     $guildsRaw = apiRequest('https://discord.com/api/users/@me/guilds');
 
     $guilds = array();
-    $i = 0;
     foreach ($guildsRaw as $guild) {
         $guilds[] = $guild->id;
     }
@@ -99,9 +99,10 @@ if (session('access_token')) {
     }
 
     // ok, we finished all the user shenanigans.
-    // let's add the user id to the session and redirect.
+    // let's add the user data to the session and redirect.
 
-    $_SESSION['user'] = $user->id;
+    $_SESSION['user'] = getUser($user->id);
+    $_SESSION['user']['flags'] = getUserFlags($user->id);
 
     header('Location: /');
     
