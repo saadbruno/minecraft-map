@@ -1,5 +1,7 @@
 <?php
 
+// Map places
+
 function getPlaces($dimension = 'Overworld')
 {
     global $pdo;
@@ -166,9 +168,9 @@ function savePlace($formData)
 
   $result['id'] = $pdo->lastInsertId();
 
-// =============
-// Discord webhook stuff
-// =============
+  // =============
+  // Discord webhook stuff
+  // =============
 
   // we need to get the icon URL form the database lul
   $iconData = getIcon($formData['icon']);
@@ -185,12 +187,96 @@ function savePlace($formData)
   } else {
     sendDiscordWebhook("add", $result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords);
   }
-// =============
-// End Discord Webhook
-// =============
+  // =============
+  // End Discord Webhook
+  // =============
 
   // sets the header, and finishes everything
   header('Content-Type: application/json; charset=UTF-8');
   echo json_encode($result, true);
+
+}
+
+// User management
+function addUser($discord)
+{
+
+  global $pdo;
+
+  $sql = "INSERT INTO `users` (`id`, `username`, `avatar`, `discriminator`, `locale`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE
+  `username` = ?,
+  `avatar` = ?, 
+  `discriminator` = ?,
+  `locale` = ?";
+  try {
+    $pdo->prepare($sql)->execute([
+      $discord->id,
+      $discord->username,
+      $discord->avatar, 
+      $discord->discriminator, 
+      $discord->locale,
+      $discord->username,
+      $discord->avatar, 
+      $discord->discriminator, 
+      $discord->locale
+      ]);
+  } catch (Exception $e) {
+    debug($e, 'NEW USER INSERT ERROR');
+  }
+
+}
+
+
+function checkAuthorizedGuilds($guilds)
+{
+    global $pdo;
+
+  // this checks if the guild ids given on the $guilds array matches 1 or more entries in the `authorized_guilds` table
+
+    $query = "SELECT `authorized_guilds`.`guild_id` FROM `authorized_guilds` WHERE `guild_id` = 0";
+    foreach ($guilds as $value) {
+      $query .= " OR `guild_id` = ?";
+    }
+
+    // debug($query, 'GUILDS QUERY');
+
+    // get places
+    $stmt = $pdo->prepare($query);
+    $stmt->execute($guilds);
+    $count = $stmt->fetchColumn();
+
+    // if there are matches, return true, otherwise return false
+    if ($count) {
+      return true;
+    } else {
+      return false;
+    }
+}
+
+function addUserFlag($id, $flag)
+{
+
+  global $pdo;
+
+  $sql = "INSERT INTO `user_flags` (`id`, `flag`) VALUES (?, ?) ON DUPLICATE KEY UPDATE id=id";
+  try {
+    $pdo->prepare($sql)->execute([$id, $flag]);
+  } catch (Exception $e) {
+    debug($e, 'USER FLAG ERROR');
+  }
+
+}
+
+function removeUserFlag($id, $flag)
+{
+
+  global $pdo;
+
+  $sql = "DELETE FROM `user_flags` WHERE (`id` = ?) and (`flag` = ?)";
+  try {
+    $pdo->prepare($sql)->execute([$id, $flag]);
+  } catch (Exception $e) {
+    debug($e, 'USER FLAG ERROR');
+  }
 
 }
