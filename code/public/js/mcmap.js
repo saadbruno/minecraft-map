@@ -118,6 +118,7 @@ $('#submit-form').on('submit', function (e) {
 
     // clears CSS class to perform validation
     $('#submit-form').find('input').removeClass('is-invalid');
+    $('#genericFeedback').html('');
 
     var formData = new FormData(this);
 
@@ -167,6 +168,8 @@ $('#submit-form').on('submit', function (e) {
                     });
                 }
 
+            } else if (data.status == 'auth_error') {
+                $('#genericFeedback').html('Not authorized');
             } else if (data.status == 'error') {
                 // loops through error messages, adding feedback to the user
                 const keys = Object.keys(data.validation);

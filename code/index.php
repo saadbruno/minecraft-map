@@ -33,6 +33,10 @@ switch ($_GET['q1']) {
         require_once("./features/api/api.php");
         break;
 
+    case 'auth':
+        require_once("./features/auth/auth.php");
+        break;
+
     case 'nether':
         $nav['active'] = 'nether';
         require_once("./features/home/home.php");
@@ -48,8 +52,9 @@ switch ($_GET['q1']) {
 }
 
 // debugging
-debug($_GET, 'GET');
+// debug($_GET, 'GET');
 // debug($_ENV, 'ENV');
 // debug($_POST, 'POST');
 // debug($db_status, 'DB status');
 // debug($_COOKIE, 'COOKIE');
+// debug($_SESSION, 'SESSION');

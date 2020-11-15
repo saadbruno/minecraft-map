@@ -51,15 +51,34 @@ CREATE TABLE `places` (
   `icon` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+DROP TABLE IF EXISTS `users`;
 
--- Dump completed on 2020-07-12 21:32:55
+CREATE TABLE `users` (
+  `id` VARCHAR(45) NOT NULL,
+  `username` VARCHAR(45) NOT NULL,
+  `avatar` VARCHAR(45) NULL,
+  `discriminator` INT NOT NULL,
+  `locale` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+COMMENT = 'Users logged in via Discord. Column names matches the Discord API';
+
+DROP TABLE IF EXISTS `user_flags`;
+
+CREATE TABLE `user_flags` (
+  `id` VARCHAR(45) NOT NULL,
+  `flag` VARCHAR(45) NOT NULL,
+  INDEX `id` (`id` ASC) INVISIBLE,
+  INDEX `flag` (`flag` ASC) INVISIBLE,
+  UNIQUE KEY `id_flag_pair` (`id`,`flag`)
+)
+COMMENT = 'Used for perms';
+
+
+DROP TABLE IF EXISTS `authorized_guilds`;
+
+CREATE TABLE `authorized_guilds` (
+  `guild_id` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`guild_id`)
+)
+COMMENT = 'When a user logs in, we check them against this table. If the user is a member of any of those guilds, we give them the correct perms';

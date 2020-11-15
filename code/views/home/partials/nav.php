@@ -36,18 +36,63 @@
 
         <!-- submit  -->
 
-        <div class="nav-user ml-md-2 mt-2 mt-md-0">
-            <div id="submitFormDropdown" class="dropdown">
+        <?php
+        //changes nav based if user is logged in / out
+        if (isset($_SESSION['user'])) {
 
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="submitButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-map-marker-alt"></i> Adicionar marcação
-                </button>
+            // if the user can add places, or is admin, show the dropdown
+            if (in_array("add_place", $_SESSION['user']['flags']) || in_array("is_admin", $_SESSION['user']['flags'])) {
+        ?>
 
-                <?php include "addPlaceDropdown.php"; ?>
+                <div class="nav-user ml-md-2 mt-2 mt-md-0">
+                    <div id="submitFormDropdown" class="dropdown">
+
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="submitButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-map-marker-alt"></i> Adicionar marcação
+                        </button>
+
+                        <?php include "addPlaceDropdown.php"; ?>
+
+                    </div>
+
+                </div>
+
+            <?php
+            }
+            ?>
+
+            <div class="nav-user ml-md-2 mt-2 mt-md-0">
+                <div id="userMenu" class="dropdown">
+
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" id="userMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="profilePicture" src="https://cdn.discordapp.com/avatars/<?= $_SESSION['user']['id'] ?>/<?= $_SESSION['user']['avatar'] ?>?size=64" />
+                        <?= $_SESSION['user']['username'] ?>#<?= $_SESSION['user']['discriminator'] ?>
+                    </button>
+
+                    <?php include "userMenuDropdown.php"; ?>
+
+                </div>
 
             </div>
 
-        </div>
+        <?php
+        } else {
+        ?>
+
+            <div class="nav-user ml-md-2 mt-2 mt-md-0">
+
+                <a class="btn btn-secondary" type="button" href="/auth?action=login">
+                    <i class="fab fa-discord"></i> Log-in
+                </a>
+
+            </div>
+
+        <?php
+        }
+
+        ?>
+
+
 
 
 
