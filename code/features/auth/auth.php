@@ -1,10 +1,13 @@
 <?php //taken from https://gist.github.com/Jengas/ad128715cb4f73f5cde9c467edf64b00
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+if ($_ENV['DEBUG'] == 1) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
 ini_set('max_execution_time', 300); //300 seconds = 5 minutes. In case if your CURL is slow and is loading too much (Can be IPv6 problem)
 
-error_reporting(E_ALL);
 
 define('OAUTH2_CLIENT_ID', $_ENV['DISCORD_OAUTH2_CLIENT_ID']);
 define('OAUTH2_CLIENT_SECRET', $_ENV['DISCORD_OAUTH2_SECRET']);
