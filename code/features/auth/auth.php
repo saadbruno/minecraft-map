@@ -57,7 +57,6 @@ if (get('code')) {
     $logout_token = $token->access_token;
     $_SESSION['access_token'] = $token->access_token;
 
-    header('Location: ' . $_SERVER['PHP_SELF']);
     header('Location: /auth');
 }
 
@@ -70,6 +69,14 @@ if (session('access_token')) {
 
     // inserts / update the user data
     addUser($user);
+
+    // if the user is listed as admin on the .env file, add the admin flag
+    if ($user->id == $_ENV['ADMIN_DISCORD_ID']) {
+        addUserFlag($user->id, 'is_admin');
+    }
+
+    // PERMS STUFF
+    // Adds flags based on the user's discord guilds
 
     // gets list of user's guilds from the Discord's API
     $guildsRaw = apiRequest('https://discord.com/api/users/@me/guilds');
@@ -91,23 +98,16 @@ if (session('access_token')) {
         removeUserFlag($user->id, 'add_place');
     }
 
+    // ok, we finished all the user shenanigans.
+    // let's add the user id to the session and redirect.
 
-    echo '<h3>Logged In</h3>';
-    echo '<h4>Welcome, ' . $user->username . '</h4>';
-    echo '<img src="https://cdn.discordapp.com/avatars/' . $user->id . '/' . $user->avatar . '?size=64">';
+    $_SESSION['user'] = $user->id;
 
-
-
-    echo '<pre>';
-    print_r($user);
-    print_r($guilds);
-    print_r($_SESSION);
-    echo '</pre>';
-    echo '<p><a href="?action=logout">Log Out</a></p>';
-
+    header('Location: /');
+    
 } else {
-    echo '<h3>Not logged in</h3>';
-    echo '<p><a href="?action=login">Log In</a></p>';
+    // user is accessing the page without an action, and without an access token
+    header('Location: /');
 }
 
 function apiRequest($url, $post = FALSE, $headers = array()) {

@@ -57,3 +57,4 @@ switch ($_GET['q1']) {
 // debug($_POST, 'POST');
 // debug($db_status, 'DB status');
 // debug($_COOKIE, 'COOKIE');
+// debug($_SESSION, 'SESSION');
