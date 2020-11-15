@@ -66,6 +66,17 @@ function getIcon($id)
 
 function savePlace($formData)
 {
+
+    // if the user doesn't have the add_place or the admin flag, return an error
+    if ( !in_array("add_place", $_SESSION['user']['flags']) || !in_array("is_admin", $_SESSION['user']['flags'])) {
+      debug('Non authorized user sending form. Aborting', 'Auth Error');
+      header('Content-Type: application/json; charset=UTF-8');
+      $result = array();
+      $result['status'] = 'auth_error';
+      $result['message'] = 'Not authorized';
+      die(json_encode($result));
+    }
+
     global $pdo;
 
     debug($formData, 'FORM');

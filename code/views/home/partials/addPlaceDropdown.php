@@ -62,5 +62,7 @@
 
         <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Enviar</button>
 
+        <div id="genericFeedback" class="errorMessage"></div>
+
     </form>
 </div>

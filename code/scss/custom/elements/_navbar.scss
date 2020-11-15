@@ -8,6 +8,7 @@
     
     .dropdown-menu {
         padding: 0.45rem;
+        z-index: 1001;
     }
 
     .submit-dropdown {
@@ -28,6 +29,28 @@
     .nav-divider {
         border-right: solid 1px var(--primary-dark);
         margin: 0 1rem;
+    }
+
+    .profilePicture {
+        width: 28px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    #userMenu {
+        button {
+            padding: 5px 12px;
+            border: none;
+            border-left: solid 2px #ffffff4a;
+            border-radius: 0;
+            &:hover {
+                background-color: #f8f9fa30;
+                color: #fff;
+            }
+            &:active {
+                background-color: #f8f9fa;
+            }
+        }
     }
 
 }
