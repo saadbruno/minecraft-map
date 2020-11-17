@@ -14,8 +14,8 @@ DROP TABLE IF EXISTS `user_flags`;
 CREATE TABLE `user_flags` (
   `id` VARCHAR(45) NOT NULL,
   `flag` VARCHAR(45) NOT NULL,
-  INDEX `id` (`id` ASC) INVISIBLE,
-  INDEX `flag` (`flag` ASC) INVISIBLE,
+  INDEX `id` (`id`),
+  INDEX `flag` (`flag`),
   UNIQUE KEY `id_flag_pair` (`id`,`flag`)
 )
 COMMENT = 'Used for perms';

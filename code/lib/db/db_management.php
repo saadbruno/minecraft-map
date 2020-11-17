@@ -68,7 +68,9 @@ function savePlace($formData)
 {
 
     // if the user doesn't have the add_place or the admin flag, return an error
-    if ( !in_array("add_place", $_SESSION['user']['flags']) || !in_array("is_admin", $_SESSION['user']['flags'])) {
+    if ( in_array("add_place", $_SESSION['user']['flags']) || in_array("is_admin", $_SESSION['user']['flags'])) {
+        // all good, please continue
+    } else {
       debug('Non authorized user sending form. Aborting', 'Auth Error');
       header('Content-Type: application/json; charset=UTF-8');
       $result = array();
