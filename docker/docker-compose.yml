@@ -17,6 +17,9 @@ services:
             - php-fpm
         depends_on:
             - mysql
+        logging:
+            options:
+                max-size: 10m
     php-fpm:
         container_name: mcmap_php-fpm
         build: ./php-fpm
@@ -33,6 +36,9 @@ services:
             - mysql
         depends_on:
             - mysql
+        logging:
+            options:
+                max-size: 10m
     mysql:
         container_name: mcmap_mysql
         image: mysql:8.0.16
@@ -43,6 +49,9 @@ services:
         env_file: .env
         networks:
             - proxy.mcmap
+        logging:
+            options:
+                max-size: 10m
 networks:
     proxy.mcmap:
         driver: overlay
