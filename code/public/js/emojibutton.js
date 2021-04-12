@@ -3,7 +3,7 @@ import { EmojiButton } from '../vendor/emojibutton/emoji-button.min.js';
 const trigger = document.querySelector('#icon-selector');
 var iconList;
 
-$.getJSON('http://map.saadbruno.test/api/icons?format=emoji-button', function (data, status) {
+$.getJSON('/api/icons?format=emoji-button', function (data, status) {
 
     iconList = data;
 
