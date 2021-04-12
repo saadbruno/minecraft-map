@@ -7,11 +7,23 @@
 
         <input type="hidden" name="id" value="">
 
+        <input type="hidden" name="icon" value="">
+                <?php
+                //foreach ($iconList as $icon) {
+                    // echo "<option value='" . $icon['id'] . "'>" . $icon['name'] . "</option>";
+                //} 
+                ?>
+
         <!-- name  -->
         <div class="form-group">
-            <label for="title" class="w-100"> Nome</label>
-            <input class="form-control" name="title" type="text" maxlength="255" placeholder="Ex: Ilha das Flores">
-            <div class="invalid-feedback">
+            <label for="title" class="w-100"> Nome e ícone</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div id="icon-selector" class="input-group-text"><img class="icon-preview" src="https://gamepedia.cursecdn.com/minecraft_gamepedia/thumb/a/af/Apple_JE3_BE3.png/120px-Apple_JE3_BE3.png" ></div>
+                </div>
+                <input class="form-control" name="title" type="text" maxlength="255" placeholder="Ex: Ilha das Flores">
+                <div class="invalid-feedback">
+                </div>
             </div>
         </div>
 
@@ -40,17 +52,6 @@
                 <input type="number" class="form-control form-control-sm" name="coordZ" maxlength="6" min="-999999" max="999999" placeholder="Z">
                 <div class="invalid-feedback"> </div>
             </div>
-        </div>
-
-        <!-- icon  -->
-        <div class="form-group">
-            <label for="icon">Ícone</label>
-            <select class="form-control" name="icon">
-                <?php foreach ($iconList as $icon) {
-                    echo "<option value='" . $icon['id'] . "'>" . $icon['name'] . "</option>";
-                } ?>
-            </select>
-            <div class="invalid-feedback"> </div>
         </div>
 
         <!-- Comments -->

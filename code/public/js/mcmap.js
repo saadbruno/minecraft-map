@@ -46,7 +46,7 @@ function switchMap(dimension) {
             }
 
             break;
-    
+
         case 'overworld':
         default:
             $('#overworld-menu').addClass('active');
@@ -58,7 +58,7 @@ function switchMap(dimension) {
 
             // adds tiles (background images)
             tilesLayer['overworld'].addTo(mcMap);
-            
+
             // if visibility is ON, add places to map
             if (document.getElementById('placesCheckbox').checked == true) {
                 placesLayers['overworld'].addTo(mcMap);
@@ -68,7 +68,7 @@ function switchMap(dimension) {
     }
 }
 
-// visibility filder dropdown for places 
+// visibility filter dropdown for places
 $('#placesCheckbox').change(function() {
 
     // When checked
@@ -100,12 +100,30 @@ $('#placesCheckbox').change(function() {
         }
 
     }
-      
+
 });
 
 // ================
 // NEW MARKER DROPDOWN
 // ================
+
+// this allows us to force bootstrap to only close the dropdown when WE want it.
+// it checks for the ".keepopen" class on the dropdown container div, and only closes it if the class is not present.
+// thanks Vartan https://stackoverflow.com/a/25089383
+$('#submitFormDropdown').on('hide.bs.dropdown', function (e) {
+    var target = $(e.target);
+    // console.log(target);
+    if(target.hasClass("keepopen") || target.parents(".keepopen").length){
+        return false; // returning false should stop the dropdown from hiding.
+    }else{
+        return true;
+    }
+});
+
+// The "submit new marker" button adds the ".keepopen" class to the dropdown, so it doesn't close on accident
+$('#submitButton').on('click', function (event) {
+    $('#submitFormDropdown').toggleClass('keepopen');
+});
 
 // let's reset the dropdown form every time the dropdown is hidden, to prevent accidentally editing an existing place
 $('#submitFormDropdown').on('hidden.bs.dropdown', function () {
@@ -137,6 +155,9 @@ $('#submit-form').on('submit', function (e) {
             // if the message was 'success', adds icon to map without reloading the page, and move map view
             if (data.status == 'success') {
 
+                // allows dropdown to close
+                $('#submitFormDropdown').removeClass('keepopen');
+
                 // location.reload();
                 if (data.id == 0) {
                     console.log('no change detected');
@@ -149,7 +170,7 @@ $('#submit-form').on('submit', function (e) {
                         if (currDimension != dimension) {
                             switchMap(dimension);
                         }
-                        
+
                         // deletes the old marker if it was an update
                         if (data.action == 'update') {
                             clearMarker(data.id);
@@ -207,6 +228,9 @@ function editPlace(btn) {
     $('#submitButton').dropdown('hide');
     resetForm('submit-form');
 
+    // adds the keepopen class to the dropdown
+    $('#submitFormDropdown').addClass('keepopen');
+
     var placeId = $(btn).data('placeid');
     // console.log('request to edit ' + placeId);
 
@@ -217,21 +241,34 @@ function editPlace(btn) {
         // opens the edit dropdown
         $('#submitButton').dropdown('show');
 
+        // updates the data on it
         $('#submit-form').find('input[name="id"]').val(data['id']);
         $('#submit-form').find('input[name="title"]').val(data['title']);
         $('#submit-form').find('select[name="dimension"]').val(data['dimension']);
         $('#submit-form').find('input[name="coordX"]').val(data['coordX']);
         $('#submit-form').find('input[name="coordY"]').val(data['coordY']);
         $('#submit-form').find('input[name="coordZ"]').val(data['coordZ']);
-        $('#submit-form').find('select[name="icon"]').val(data['icon']);
+        $('#submit-form').find('input[name="icon"]').val(data['icon']);
         $('#submit-form').find('textarea[name="comment"]').html(data['comment']).val(data['comment']);
+
+        // updates selected icon
+        replaceIcon(document.querySelector('#icon-selector') , data['icon_url']);
 
     });
 
 }
 
+// function to replace the icon picker image
+function replaceIcon(button, iconUrl) {
+    button.removeChild(button.firstChild);
+    const img = document.createElement('img');
+    img.src = iconUrl;
+    img.className = "icon-preview";
+    button.appendChild(img);
+}
+
 // ================
-// MAP STUFF 
+// MAP STUFF
 // ================
 
 
@@ -251,7 +288,7 @@ function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
         case 'nether':
             var apiUrl = '/api/places/nether';
             break;
-    
+
         case 'overworld':
         default:
             var apiUrl = '/api/places/overworld';
@@ -274,7 +311,7 @@ function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
 
         // if not hidden, add it to the map right away
         if (hidden == false) {
-            placesLayers[dimension].addTo(mcMap);    
+            placesLayers[dimension].addTo(mcMap);
         }
     });
 
@@ -305,7 +342,7 @@ function getMinedMapTiles(dimension = 'overworld', hidden = false) {
 
         // if not hidden, add it to the map right away
         if (hidden == false) {
-            tilesLayer[dimension].addTo(mcMap); 
+            tilesLayer[dimension].addTo(mcMap);
         }
 
 	};
@@ -328,7 +365,7 @@ function createMarker(markerData, open = false, dimension = 'overworld') {
     popup += '<h6><i class="fas fa-map-marker-alt"></i> Coordenadas:</h6>';
     popup += '<p>X: ' + markerData['coordX'];
     if (markerData['coordY']) {
-        popup += '<br>Y: ' + markerData['coordY'];  
+        popup += '<br>Y: ' + markerData['coordY'];
     }
 
     popup += '<br>Z: ' + markerData['coordZ'] + '</p>';
@@ -354,7 +391,7 @@ function createMarker(markerData, open = false, dimension = 'overworld') {
     markers.push(myMarker);
     return myMarker;
     // mcMap.addLayer(myMarker);
-    
+
 
 }
 
@@ -412,7 +449,7 @@ mcMap.on('mousemove', function(e) {
 // adds scale UI to bottom left
 L.control.scale({ imperial: false }).addTo(mcMap);
 
-// adds the XZ map axis to the bottom left of the map 
+// adds the XZ map axis to the bottom left of the map
 var mapAxis = L.control({ position: "bottomleft" });
 
 mapAxis.onAdd = function (mcMap) {

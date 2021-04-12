@@ -36,7 +36,15 @@ switch ($_GET['q2']) {
 
     case 'icons':
 
-        $icons =  getIcons();
+        switch ($_GET['format']) {
+            case 'emoji-button':
+                $icons =  getIcons('emoji-button');
+                break;
+            
+            default:
+                $icons =  getIcons();
+                break;
+        }
 
         //debug($icons, 'ICONS');
 

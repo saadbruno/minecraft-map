@@ -33,14 +33,37 @@ function getPlace($id)
 
 }
 
-function getIcons()
+function getIcons($format = 'default')
 {
     global $pdo;
 
-    // get places
-    $stmt = $pdo->prepare("SELECT * FROM mcmap.icons WHERE `published` = 1 ORDER BY name ASC");
-    $stmt->execute();
-    $result = $stmt->fetchAll();
+    // get places, formatted as necessary
+    switch ($format) {
+      case 'emoji-button':
+
+        // For Emoji-Button (https://github.com/joeattardi/emoji-button)
+        // we need to set the url to 'emoji'
+        // we also need to set the id in the "custom data" array -> https://github.com/joeattardi/emoji-button/pull/144
+
+        $stmt = $pdo->prepare("SELECT `id`,`name`,`url` AS `emoji`,`category`  FROM mcmap.icons WHERE `published` = 1 ORDER BY name ASC");
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+
+        // puts the ID in the customData array
+        foreach($result as $key => $value) {
+          $result[$key]['customData']['id'] = $value['id'];
+          unset($result[$key]['id']);
+        }
+
+        break;
+      
+      default:
+        $stmt = $pdo->prepare("SELECT * FROM mcmap.icons WHERE `published` = 1 ORDER BY name ASC");
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        
+      break;
+    }
 
     return $result;
 }

@@ -1,0 +1,13 @@
+// temporary workaround for https://github.com/joeattardi/emoji-button/issues/131
+.emoji-picker__container:not(:last-child),
+.emoji-picker__emojis h2.emoji-picker__category-name {
+    display: none;
+}
+
+img.emoji-picker__custom-emoji {
+    object-fit: contain;
+}
+// draw it on top of map
+.emoji-picker__wrapper {
+    z-index: 1002;
+}

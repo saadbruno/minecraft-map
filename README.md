@@ -40,3 +40,4 @@ This system supports [Minedmap](https://github.com/NeoRaider/MinedMap) to insert
 ## Links:
 - [Docker LEMP stack](https://github.com/cvaclav/docker-lemp-stack)
 - [Minedmap](https://github.com/NeoRaider/MinedMap)
+- [Emoji-Button](https://github.com/joeattardi/emoji-button)
