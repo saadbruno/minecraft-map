@@ -3,4 +3,11 @@
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
     }
+    .input-group-prepend {
+        .icon-preview {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+    }
 }

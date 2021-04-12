@@ -4,3 +4,4 @@
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin="anonymous"></script>
 <script src="/public/vendor/minedmap/1.16/MinedMap.js"></script>
 <script src="/public/js/mcmap.js?v=<?= $config['version'] ?>"></script>
+<script type='module' src="/public/js/emojibutton.js?v=<?= $config['version'] ?>"></script>
