@@ -4,9 +4,8 @@
 setup: redeploy import-schema
 
 # Build commands
-build: build-network build-sass build-containers
-build-network:
-	docker network create proxy.mcmap
+build: build-sass build-containers
+
 build-containers:
 	docker-compose build
 build-nginx:
@@ -41,7 +40,7 @@ clean:
 	docker system prune -f
 prune-db:
 	rm -rf ../mysql
-redeploy: stop clean build-network build run
+redeploy: stop clean build run
 
 redeploy-web: stop-nginx stop-php clean build-nginx build-php run-nginx run-php
 
@@ -105,15 +104,15 @@ stop-php-prod:
 stop-prod:
 	docker-compose -f docker-compose.prod.yml down
 
-redeploy-prod: redeploy-nginx-prod redeploy-php-prod
+redeploy-prod: build-sass build-nginx-prod build-php-prod stop-nginx-prod stop-php-prod run-php-prod run-nginx-prod clean
 
-redeploy-all-prod: build-sass build-prod stop-prod clean build-network run-prod
+redeploy-all-prod: build-sass build-prod stop-prod run-prod clean
 
-redeploy-mysql-prod: build-mysql-prod stop-mysql-prod clean run-mysql-prod
+redeploy-mysql-prod: build-mysql-prod stop-mysql-prod run-mysql-prod clean
 
-redeploy-nginx-prod: build-nginx-prod stop-nginx-prod clean run-nginx-prod
+redeploy-nginx-prod: build-nginx-prod stop-nginx-prod run-nginx-prod clean
 
-redeploy-php-prod: build-php-prod stop-php-prod clean run-php-prod
+redeploy-php-prod: build-php-prod stop-php-prod run-php-prod  clean
 
 redeploy-web-prod: redeploy-prod
 
