@@ -236,7 +236,7 @@ function editPlace(btn) {
 
     // gets current data from the database
     $.getJSON("/api/places/" + placeId, function (data, status) {
-        console.log(data);
+        // console.log(data);
 
         // opens the edit dropdown
         $('#submitButton').dropdown('show');
