@@ -11,8 +11,6 @@ services:
             dockerfile: docker/nginx/prod/Dockerfile
         volumes:
             - ../code/public/minedmap/data:/var/www/code/public/minedmap/data
-        networks:
-            - proxy.mcmap
         env_file:
             - .env
         links:
@@ -30,8 +28,6 @@ services:
             dockerfile: docker/php-fpm/prod/Dockerfile
         expose:
             - "9000"
-        networks:
-            - proxy.mcmap
         env_file:
             - .env
         links:
@@ -48,14 +44,7 @@ services:
         expose:
             - "3306"
         env_file: .env
-        networks:
-            - proxy.mcmap
         restart: unless-stopped
         logging:
             options:
                 max-size: 10m
-networks:
-    proxy.mcmap:
-        driver: overlay
-        external: true
-        attachable: true
