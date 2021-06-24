@@ -9,9 +9,9 @@ build: build-sass build-containers
 build-containers:
 	docker-compose build
 build-nginx:
-	docker-compose build nginx
+	docker-compose build mcmap_nginx
 build-php:
-	docker-compose build php-fpm
+	docker-compose build mcmap_php
 build-sass:
 	docker run --rm  -v `pwd`/../code/scss:/usr/src/app/scss  -v `pwd`/../code/public/styles:/usr/src/app/css cscheide/node-sass node-sass -r -o /usr/src/app/css/ /usr/src/app/scss/custom/
 
@@ -19,20 +19,18 @@ build-sass:
 run:
 	docker-compose up -d
 run-nginx:
-	docker-compose up -d nginx
+	docker-compose up -d mcmap_nginx
 run-php:
-	docker-compose up -d php-fpm
+	docker-compose up -d mcmap_php
 run-mysql:
 	docker-compose up -d mysql
 # Stop containers
 stop:
 	docker-compose down
 stop-nginx:
-	docker-compose stop nginx
-stop-sass:
-	docker-compose stop nginx
+	docker-compose stop mcmap_nginx
 stop-php:
-	docker-compose stop php-fpm
+	docker-compose stop mcmap_php
 stop-mysql:
 	docker-compose stop mysql
 # Clean and redeploy
@@ -50,7 +48,7 @@ redeploy-mysql: stop-mysql clean run-mysql
 
 # Attach to command line inside container
 manage-php:
-	docker exec -it mcmap_php-fpm bash
+	docker exec -it mcmap_php bash
 manage-nginx:
 	docker exec -it mcmap_nginx bash
 manage-mysql:
@@ -61,9 +59,9 @@ manage-mysql:
 logs:
 	docker-compose logs -f
 logs-php:
-	docker-compose logs -f php-fpm
+	docker-compose logs -f mcmap_php
 logs-nginx:
-	docker-compose logs -f nginx
+	docker-compose logs -f mcmap_nginx
 logs-mysql:
 	docker-compose logs -f mysql
 
@@ -80,27 +78,27 @@ restore-mysql:
 build-mysql-prod:
 	docker-compose -f docker-compose.prod.yml build --no-cache mysql
 build-nginx-prod:
-	docker-compose -f docker-compose.prod.yml build --no-cache nginx
+	docker-compose -f docker-compose.prod.yml build --no-cache mcmap_nginx
 build-php-prod:
-	docker-compose -f docker-compose.prod.yml build --no-cache php-fpm
+	docker-compose -f docker-compose.prod.yml build --no-cache mcmap_php
 build-prod:
 	docker-compose -f docker-compose.prod.yml build --no-cache
 
 run-mysql-prod:
 	docker-compose -f docker-compose.prod.yml up -d mysql
 run-nginx-prod:
-	docker-compose -f docker-compose.prod.yml up -d nginx
+	docker-compose -f docker-compose.prod.yml up -d mcmap_nginx
 run-php-prod:
-	docker-compose -f docker-compose.prod.yml up -d php-fpm
+	docker-compose -f docker-compose.prod.yml up -d mcmap_php
 run-prod:
 	docker-compose -f docker-compose.prod.yml up -d
 
 stop-mysql-prod:
 	docker-compose -f docker-compose.prod.yml stop mysql
 stop-nginx-prod:
-	docker-compose -f docker-compose.prod.yml stop nginx
+	docker-compose -f docker-compose.prod.yml stop mcmap_nginx
 stop-php-prod:
-	docker-compose -f docker-compose.prod.yml stop php-fpm
+	docker-compose -f docker-compose.prod.yml stop mcmap_php
 stop-prod:
 	docker-compose -f docker-compose.prod.yml down
 
