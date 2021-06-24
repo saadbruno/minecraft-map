@@ -23,7 +23,7 @@ services:
                 max-size: 10m
     mcmap_php:
         image: saadbruno/mcmap_php:latest
-        container_name: mcmap_php-fpm
+        container_name: mcmap_php
         build:
             context: ../
             dockerfile: docker/php-fpm/prod/Dockerfile
