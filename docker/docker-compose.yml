@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-    nginx:
+    mcmap_nginx:
         container_name: mcmap_nginx
         image: nginx:latest
         ports:
@@ -12,14 +12,14 @@ services:
         env_file:
             - .env
         links:
-            - php-fpm
+            - mcmap_php
         depends_on:
             - mysql
         logging:
             options:
                 max-size: 10m
-    php-fpm:
-        container_name: mcmap_php-fpm
+    mcmap_php:
+        container_name: mcmap_php
         build: ./php-fpm
         expose:
             - "9000"
