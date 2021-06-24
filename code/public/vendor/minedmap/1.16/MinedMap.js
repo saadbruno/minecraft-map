@@ -1,3 +1,22 @@
+// bsearch-based array element check
+function contains(array, elem) {
+	var min = 0, max = array.length, i, cur;
+
+	while (min < max) {
+		i = min + Math.floor((max-min)/2);
+		cur = array[i];
+
+		if (cur === elem)
+			return true;
+		else if (cur < elem)
+			min = i + 1;
+		else
+			max = i;
+	}
+
+	return false;
+}
+
 var MinedMapLayer = L.GridLayer.extend({
 	initialize: function (mipmaps, layer) {
 		this.mipmaps = mipmaps;
@@ -41,9 +60,9 @@ var MinedMapLayer = L.GridLayer.extend({
 
 		var mipmap = this.mipmaps[z];
 
-		if (coords.x >= mipmap.info.minX && coords.x <= mipmap.info.maxX &&
-		    coords.y >= mipmap.info.minZ && coords.y <= mipmap.info.maxZ &&
-		    mipmap.regions[coords.y-mipmap.info.minZ][coords.x-mipmap.info.minX])
+		if (coords.x >= mipmap.bounds.minX && coords.x <= mipmap.bounds.maxX &&
+		    coords.y >= mipmap.bounds.minZ && coords.y <= mipmap.bounds.maxZ &&
+		    contains(mipmap.regions[coords.y] || [], coords.x))
 			tile.src = '/public/minedmap/data/'+this.layer+'/'+z+'/r.'+coords.x+'.'+coords.y+'.png';
 
 		if (z === 0)
@@ -102,7 +121,7 @@ var MinedMapLayer = L.GridLayer.extend({
 
 var CoordControl = L.Control.extend({
 	initialize: function () {
-		this.options.position = 'topright';
+		this.options.position = 'bottomleft';
 	},
 
 	onAdd: function (map) {
@@ -171,8 +190,8 @@ window.createMap = function () {
 			maxZoom: 3,
 			crs: L.CRS.Simple,
 			maxBounds: [
-				[-512*(mipmaps[0].info.maxZ+1), 512*mipmaps[0].info.minX],
-				[-512*mipmaps[0].info.minZ, 512*(mipmaps[0].info.maxX+1)],
+				[-512*(mipmaps[0].bounds.maxZ+1), 512*mipmaps[0].bounds.minX],
+				[-512*mipmaps[0].bounds.minZ, 512*(mipmaps[0].bounds.maxX+1)],
 			],
 		});
 
