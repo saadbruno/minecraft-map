@@ -1,8 +1,8 @@
 version: '3.4'
 services:
-    nginx:
+    mcmap_nginx:
         container_name: mcmap_nginx
-        image: nginx:latest
+        image: saadbruno/mcmap_nginx:latest
         ports:
             - "8083:80"
             - "4001:443"
@@ -14,14 +14,15 @@ services:
         env_file:
             - .env
         links:
-            - php-fpm
+            - mcmap_php
         depends_on:
             - mysql
         restart: unless-stopped
         logging:
             options:
                 max-size: 10m
-    php-fpm:
+    mcmap_php:
+        image: saadbruno/mcmap_php:latest
         container_name: mcmap_php-fpm
         build:
             context: ../

@@ -80,27 +80,27 @@ restore-mysql:
 build-mysql-prod:
 	docker-compose -f docker-compose.prod.yml build --no-cache mysql
 build-nginx-prod:
-	docker-compose -f docker-compose.prod.yml build --no-cache nginx
+	docker-compose -f docker-compose.prod.yml build --no-cache mcmap_nginx
 build-php-prod:
-	docker-compose -f docker-compose.prod.yml build --no-cache php-fpm
+	docker-compose -f docker-compose.prod.yml build --no-cache mcmap_php
 build-prod:
 	docker-compose -f docker-compose.prod.yml build --no-cache
 
 run-mysql-prod:
 	docker-compose -f docker-compose.prod.yml up -d mysql
 run-nginx-prod:
-	docker-compose -f docker-compose.prod.yml up -d nginx
+	docker-compose -f docker-compose.prod.yml up -d mcmap_nginx
 run-php-prod:
-	docker-compose -f docker-compose.prod.yml up -d php-fpm
+	docker-compose -f docker-compose.prod.yml up -d mcmap_php
 run-prod:
 	docker-compose -f docker-compose.prod.yml up -d
 
 stop-mysql-prod:
 	docker-compose -f docker-compose.prod.yml stop mysql
 stop-nginx-prod:
-	docker-compose -f docker-compose.prod.yml stop nginx
+	docker-compose -f docker-compose.prod.yml stop mcmap_nginx
 stop-php-prod:
-	docker-compose -f docker-compose.prod.yml stop php-fpm
+	docker-compose -f docker-compose.prod.yml stop mcmap_php
 stop-prod:
 	docker-compose -f docker-compose.prod.yml down
 
