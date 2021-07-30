@@ -10,7 +10,7 @@ services:
             context: ../
             dockerfile: docker/nginx/prod/Dockerfile
         volumes:
-            - ../code/public/minedmap/data:/var/www/code/public/minedmap/data
+            - ../code/public/minedmap:/var/www/code/public/minedmap
         env_file:
             - .env
         links:

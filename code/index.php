@@ -42,6 +42,11 @@ switch ($_GET['q1']) {
         require_once("./features/home/home.php");
         break;
 
+    case 'the_end':
+        $nav['active'] = 'the_end';
+        require_once("./features/home/home.php");
+        break;
+
     case 'home':
     default:
 
