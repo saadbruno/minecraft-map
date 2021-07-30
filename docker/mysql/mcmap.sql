@@ -46,7 +46,7 @@ CREATE TABLE `places` (
   `coordY` int(6) NOT NULL,
   `coordZ` int(6) NOT NULL,
   `comment` text,
-  `dimension` enum('Overworld','Nether') NOT NULL,
+  `dimension` enum('Overworld','Nether', 'The_End') NOT NULL,
   `published` tinyint(4) NOT NULL DEFAULT '1',
   `icon` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)

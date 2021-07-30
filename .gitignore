@@ -9,3 +9,6 @@
 
 /code/public/minedmap/data/*
 !/code/public/minedmap/data/.gitignore
+
+/code/public/minedmap/data_the_end/*
+!/code/public/minedmap/data_the_end/.gitignore

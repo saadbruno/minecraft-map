@@ -12,7 +12,7 @@
         ?>
 
         <main role="main" class="flex-grow-1">
-            <div id="overworld" class="mapContainer"></div>
+            <div id="mapContainer" class="mapContainer <?= $nav['active'] ?>"></div>
         </main>
 
         <?php

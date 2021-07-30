@@ -14,12 +14,10 @@ $(function () {
 $('.dimension-item').click(function(e) {
     e.preventDefault();
 
-
-    $(this).addClass('active');
-
     dimension = $(this).children('a').html().toLowerCase();
-    switchMap(dimension);
 
+    // console.log(dimension);
+    switchMap(dimension);
 
   });
 
@@ -39,11 +37,40 @@ function switchMap(dimension) {
 
             placesLayers['overworld'].removeFrom(mcMap);
             tilesLayer['overworld'].removeFrom(mcMap);
+            placesLayers['the_end'].removeFrom(mcMap);
+            tilesLayer['the_end'].removeFrom(mcMap);
 
             // if visibility is ON, add places to map
             if (document.getElementById('placesCheckbox').checked == true) {
                 placesLayers['nether'].addTo(mcMap);
             }
+
+            // changes css classes for the mapContainer
+            document.getElementById('mapContainer').classList.remove('the_end','overworld');
+            document.getElementById('mapContainer').classList.add('nether');
+
+            break;
+
+        case 'the end':
+        case 'the_end':
+            $('#the-end-menu').addClass('active');
+            window.history.pushState('the_end', 'the_end', '/the_end');
+            currDimension = 'the_end';
+
+            placesLayers['overworld'].removeFrom(mcMap);
+            tilesLayer['overworld'].removeFrom(mcMap);
+            placesLayers['nether'].removeFrom(mcMap);
+
+            tilesLayer['the_end'].addTo(mcMap);
+
+            // if visibility is ON, add places to map
+            if (document.getElementById('placesCheckbox').checked == true) {
+                placesLayers['the_end'].addTo(mcMap);
+            }
+
+            // changes css classes for the mapContainer
+            document.getElementById('mapContainer').classList.remove('nether','overworld');
+            document.getElementById('mapContainer').classList.add('the_end');
 
             break;
 
@@ -55,7 +82,8 @@ function switchMap(dimension) {
 
             // removes nether places from the map
             placesLayers['nether'].removeFrom(mcMap);
-
+            placesLayers['the_end'].removeFrom(mcMap);
+            tilesLayer['the_end'].removeFrom(mcMap);
             // adds tiles (background images)
             tilesLayer['overworld'].addTo(mcMap);
 
@@ -63,6 +91,10 @@ function switchMap(dimension) {
             if (document.getElementById('placesCheckbox').checked == true) {
                 placesLayers['overworld'].addTo(mcMap);
             }
+
+            // changes css classes for the mapContainer
+            document.getElementById('mapContainer').classList.remove('the_end','nether');
+            document.getElementById('mapContainer').classList.add('overworld');
 
             break;
     }
@@ -79,6 +111,10 @@ $('#placesCheckbox').change(function() {
                 placesLayers['nether'].addTo(mcMap);
                 break;
 
+            case 'the_end':
+                placesLayers['the_end'].addTo(mcMap);
+                break;
+
             case 'overworld':
             default:
                 placesLayers['overworld'].addTo(mcMap);
@@ -87,18 +123,9 @@ $('#placesCheckbox').change(function() {
 
     // When unchecked
     } else {
-        // removes current dimension's icon to the map
-        switch (currDimension) {
-            case 'nether':
-                placesLayers['nether'].removeFrom(mcMap);
-                break;
-
-            case 'overworld':
-            default:
-                placesLayers['overworld'].removeFrom(mcMap);
-                break;
-        }
-
+        placesLayers['nether'].removeFrom(mcMap);
+        placesLayers['the_end'].removeFrom(mcMap);
+        placesLayers['overworld'].removeFrom(mcMap);
     }
 
 });
@@ -289,6 +316,10 @@ function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
             var apiUrl = '/api/places/nether';
             break;
 
+        case 'the_end':
+            var apiUrl = '/api/places/the_end';
+            break;
+
         case 'overworld':
         default:
             var apiUrl = '/api/places/overworld';
@@ -321,20 +352,32 @@ var tilesLayer = [];
 function getMinedMapTiles(dimension = 'overworld', hidden = false) {
     // console.log('getting minedmap tiles');
 
+    var dataPath;
+
+    // data that changes depending on the dimension
+    switch (dimension) {
+        case 'the_end':
+            dataPath = 'data_the_end';
+            break;
+    
+        case 'overworld':
+        default:
+            dataPath = 'data';
+            break;
+    }
+
+
     var xhr = new XMLHttpRequest();
 	xhr.onload = function () {
 		var res = JSON.parse(this.responseText),
 		    mipmaps = res.mipmaps,
 		    spawn = res.spawn;
 
-        // console.log('res');
-        // console.log(res);
-
-        // console.log('mipmaps');
-        // console.log(mipmaps);
+        console.log('res ' + dimension, res);
+        console.log('mipmaps ' + dimension, mipmaps);
 
 
-		tilesLayer[dimension] = new MinedMapLayer(mipmaps, 'map');
+		tilesLayer[dimension] = new MinedMapLayer(mipmaps, 'map', dataPath);
 
         //mcMap.addLayer(tilesLayer[dimension]);
         // layerControl.addOverlay(tilesLayer[dimension], dimension + 'Tiles');
@@ -347,7 +390,8 @@ function getMinedMapTiles(dimension = 'overworld', hidden = false) {
 
 	};
 
-	xhr.open('GET', '/public/minedmap/data/info.json', true);
+
+    xhr.open('GET', '/public/minedmap/'+dataPath+'/info.json', true);
 	xhr.send();
 
 }
@@ -403,6 +447,7 @@ function clearMarker(id, dimension) {
         if (marker._id == id) {
             marker.removeFrom(placesLayers['overworld']);
             marker.removeFrom(placesLayers['nether']);
+            marker.removeFrom(placesLayers['the_end']);
         } else  {
             new_markers.push(marker);
         }
@@ -422,18 +467,13 @@ var blockIcon = L.Icon.extend({
 });
 
 // // Overworld map
-var mcMap = L.map('overworld', {
+var mcMap = L.map('mapContainer', {
     crs: L.CRS.Simple,
     minZoom: -5
 });
 
 
 var bounds = [[-5000, -5000], [5000, 5000]];
-var image = L.imageOverlay('/public/media/img/10k_grid.svg', bounds).addTo(mcMap);
-
-
-// var bounds = [[-470, -370], [397, 977]];
-// var image = L.imageOverlay('/public/media/img/map/overworld1.jpg', bounds, {opacity: 0.3, zIndex: -1 }).addTo(mcMap);
 
 
 // adds coordinates UI
@@ -470,19 +510,36 @@ window.onload = function () {
 
 
 
-    // if it's /nether, we hide the overworld stuff. otherwise, do the opposite
-    if (pathArray[1] == 'nether') {
-        currDimension = 'nether';
-        getPlaces(false, 'overworld', true);
-        getPlaces(false, 'nether', false);
-        getMinedMapTiles('overworld', true);
-    } else {
-        currDimension = 'overworld';
-        getPlaces(false, 'overworld');
-        getPlaces(false, 'nether', true);
-        getMinedMapTiles('overworld', false);
-    }
+    // loads places and tiles (and hides them depending on the currently select dimension)
+    switch (pathArray[1]) {
+        case 'nether':
+            currDimension = 'nether';
+            getPlaces(false, 'overworld', true);
+            getPlaces(false, 'nether', false);
+            getPlaces(false, 'the_end', true);
+            getMinedMapTiles('overworld', true);
+            getMinedMapTiles('the_end', true);            
+            break;
+    
+        case 'the_end':
+            currDimension = 'the_end';
+            getPlaces(false, 'overworld', true);
+            getPlaces(false, 'nether', true);
+            getPlaces(false, 'the_end', false);
+            getMinedMapTiles('overworld', true);
+            getMinedMapTiles('the_end', false);
+            break
 
+        case 'overworld':
+        default:
+            currDimension = 'overworld';
+            getPlaces(false, 'overworld');
+            getPlaces(false, 'nether', true);
+            getPlaces(false, 'the_end', true);
+            getMinedMapTiles('overworld', false);
+            getMinedMapTiles('the_end', true);
+            break;
+    }
 };
 
 // ========

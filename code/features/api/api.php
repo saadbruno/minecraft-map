@@ -4,9 +4,8 @@ switch ($_GET['q2']) {
 
     case 'places':
 
-        switch ($_GET['q3']) {
+        switch (strtolower($_GET['q3'])) {
             case 'overworld':
-            case 'Overworld':
 
                 $places =  getPlaces('Overworld');
                 // debug($places, 'PLACES');
@@ -16,9 +15,17 @@ switch ($_GET['q2']) {
                 break;
 
             case 'nether':
-            case 'Nether':
 
                 $places =  getPlaces('Nether');
+                // debug($places, 'PLACES');
+                header('Content-Type: application/json');
+                echo json_encode($places);
+
+                break;
+
+            case 'the_end':
+
+                $places =  getPlaces('The_End');
                 // debug($places, 'PLACES');
                 header('Content-Type: application/json');
                 echo json_encode($places);

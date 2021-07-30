@@ -18,9 +18,10 @@ function contains(array, elem) {
 }
 
 var MinedMapLayer = L.GridLayer.extend({
-	initialize: function (mipmaps, layer) {
+	initialize: function (mipmaps, layer, dataPath = 'data') {
 		this.mipmaps = mipmaps;
 		this.layer = layer;
+		this.dataPath = dataPath;
 
 		this.zoomOffset = L.Browser.retina ? 1 : 0;
 
@@ -63,7 +64,7 @@ var MinedMapLayer = L.GridLayer.extend({
 		if (coords.x >= mipmap.bounds.minX && coords.x <= mipmap.bounds.maxX &&
 		    coords.y >= mipmap.bounds.minZ && coords.y <= mipmap.bounds.maxZ &&
 		    contains(mipmap.regions[coords.y] || [], coords.x))
-			tile.src = '/public/minedmap/data/'+this.layer+'/'+z+'/r.'+coords.x+'.'+coords.y+'.png';
+			tile.src = '/public/minedmap/'+this.dataPath+'/'+this.layer+'/'+z+'/r.'+coords.x+'.'+coords.y+'.png';
 
 		if (z === 0)
 			L.DomUtil.addClass(tile, 'overzoomed');

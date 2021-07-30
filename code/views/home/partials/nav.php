@@ -16,6 +16,11 @@
             <li id="nether-menu" class="dimension-item nav-item <?= $nav['active'] == 'nether' ? 'active' : '' ?>">
                 <a class="nav-link" href="/nether">Nether</a>
             </li>
+
+            <li id="the-end-menu" class="dimension-item nav-item <?= $nav['active'] == 'the_end' ? 'active' : '' ?>">
+                <a class="nav-link" href="/the_end">The End</a>
+            </li>
+
         </ul>
 
 

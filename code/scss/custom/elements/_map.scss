@@ -1,7 +1,16 @@
-.mapContainer {
+#mapContainer {
     height: 100%;
     width: 100%;
     display: block;
+
+    &.nether {
+        background-color: #270505;
+    }
+
+    &.the_end {
+        background-color: #140e19;
+    }
+
 }
 
 .mapAxis {

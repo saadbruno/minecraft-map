@@ -33,6 +33,7 @@
             <select class="form-control" name="dimension">
                 <option value='Overworld'>Overworld</option>
                 <option value='Nether'>Nether</option>
+                <option value='The_End'>The End</option>
             </select>
             <div class="invalid-feedback"> </div>
         </div>
