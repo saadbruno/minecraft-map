@@ -23,6 +23,8 @@ $('.dimension-item').click(function(e) {
 
 function switchMap(dimension) {
 
+    // console.log("switching map to " + dimension);
+
     // UI Stuff. Updates the menu and the browser URL
     $('.dimension-item').each(function (i, obj) {
         $(obj).removeClass('active');
@@ -39,6 +41,8 @@ function switchMap(dimension) {
             tilesLayer['overworld'].removeFrom(mcMap);
             placesLayers['the_end'].removeFrom(mcMap);
             tilesLayer['the_end'].removeFrom(mcMap);
+
+            tilesLayer['nether'].addTo(mcMap);
 
             // if visibility is ON, add places to map
             if (document.getElementById('placesCheckbox').checked == true) {
@@ -60,6 +64,8 @@ function switchMap(dimension) {
             placesLayers['overworld'].removeFrom(mcMap);
             tilesLayer['overworld'].removeFrom(mcMap);
             placesLayers['nether'].removeFrom(mcMap);
+            tilesLayer['nether'].removeFrom(mcMap);
+
 
             tilesLayer['the_end'].addTo(mcMap);
 
@@ -82,6 +88,7 @@ function switchMap(dimension) {
 
             // removes nether places from the map
             placesLayers['nether'].removeFrom(mcMap);
+            tilesLayer['nether'].removeFrom(mcMap);
             placesLayers['the_end'].removeFrom(mcMap);
             tilesLayer['the_end'].removeFrom(mcMap);
             // adds tiles (background images)
@@ -350,7 +357,7 @@ function getPlaces(clear = false, dimension = 'overworld', hidden = false) {
 
 var tilesLayer = [];
 function getMinedMapTiles(dimension = 'overworld', hidden = false) {
-    // console.log('getting minedmap tiles');
+    // console.log('getting minedmap tiles for ' + dimension);
 
     var dataPath;
 
@@ -359,7 +366,11 @@ function getMinedMapTiles(dimension = 'overworld', hidden = false) {
         case 'the_end':
             dataPath = 'data_the_end';
             break;
-    
+
+        case 'nether':
+            dataPath = 'data_nether';
+            break;
+
         case 'overworld':
         default:
             dataPath = 'data';
@@ -373,8 +384,8 @@ function getMinedMapTiles(dimension = 'overworld', hidden = false) {
 		    mipmaps = res.mipmaps,
 		    spawn = res.spawn;
 
-        console.log('res ' + dimension, res);
-        console.log('mipmaps ' + dimension, mipmaps);
+        // console.log('res ' + dimension, res);
+        // console.log('mipmaps ' + dimension, mipmaps);
 
 
 		tilesLayer[dimension] = new MinedMapLayer(mipmaps, 'map', dataPath);
@@ -518,6 +529,7 @@ window.onload = function () {
             getPlaces(false, 'nether', false);
             getPlaces(false, 'the_end', true);
             getMinedMapTiles('overworld', true);
+            getMinedMapTiles('nether', false);
             getMinedMapTiles('the_end', true);            
             break;
     
@@ -527,6 +539,7 @@ window.onload = function () {
             getPlaces(false, 'nether', true);
             getPlaces(false, 'the_end', false);
             getMinedMapTiles('overworld', true);
+            getMinedMapTiles('nether', true);
             getMinedMapTiles('the_end', false);
             break
 
@@ -537,6 +550,7 @@ window.onload = function () {
             getPlaces(false, 'nether', true);
             getPlaces(false, 'the_end', true);
             getMinedMapTiles('overworld', false);
+            getMinedMapTiles('nether', true);
             getMinedMapTiles('the_end', true);
             break;
     }
