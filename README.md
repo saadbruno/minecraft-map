@@ -41,9 +41,6 @@ services:
         image: saadbruno/mcmap_nginx:latest
         ports:
             - "${HTTP_PORT}:80"
-        build:
-            context: ./
-            dockerfile: docker/nginx/prod/Dockerfile
         volumes:
             - ./minedmap:/var/www/code/public/minedmap:ro
         env_file:
