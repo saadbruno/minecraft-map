@@ -2,6 +2,10 @@
 // GENERAL STUFF
 // ================
 
+// get all query strings
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+
 // bootstrap tooltips
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
@@ -21,6 +25,7 @@ $('.dimension-item').click(function(e) {
 
   });
 
+// function to remove current map tiles and places, and replace with new ones
 function switchMap(dimension) {
 
     // console.log("switching map to " + dimension);
@@ -37,6 +42,10 @@ function switchMap(dimension) {
             window.history.pushState('nether', 'nether', '/nether');
             currDimension = 'nether';
 
+            // changes css classes for the mapContainer
+            document.getElementById('mapContainer').classList.remove('the_end','overworld');
+            document.getElementById('mapContainer').classList.add('nether');
+
             placesLayers['overworld'].removeFrom(mcMap);
             tilesLayer['overworld'].removeFrom(mcMap);
             placesLayers['the_end'].removeFrom(mcMap);
@@ -49,10 +58,6 @@ function switchMap(dimension) {
                 placesLayers['nether'].addTo(mcMap);
             }
 
-            // changes css classes for the mapContainer
-            document.getElementById('mapContainer').classList.remove('the_end','overworld');
-            document.getElementById('mapContainer').classList.add('nether');
-
             break;
 
         case 'the end':
@@ -60,6 +65,10 @@ function switchMap(dimension) {
             $('#the-end-menu').addClass('active');
             window.history.pushState('the_end', 'the_end', '/the_end');
             currDimension = 'the_end';
+
+            // changes css classes for the mapContainer
+            document.getElementById('mapContainer').classList.remove('nether','overworld');
+            document.getElementById('mapContainer').classList.add('the_end');
 
             placesLayers['overworld'].removeFrom(mcMap);
             tilesLayer['overworld'].removeFrom(mcMap);
@@ -74,10 +83,6 @@ function switchMap(dimension) {
                 placesLayers['the_end'].addTo(mcMap);
             }
 
-            // changes css classes for the mapContainer
-            document.getElementById('mapContainer').classList.remove('nether','overworld');
-            document.getElementById('mapContainer').classList.add('the_end');
-
             break;
 
         case 'overworld':
@@ -85,6 +90,10 @@ function switchMap(dimension) {
             $('#overworld-menu').addClass('active');
             window.history.pushState('overworld', 'overworld', '/');
             currDimension = 'overworld';
+
+            // changes css classes for the mapContainer
+            document.getElementById('mapContainer').classList.remove('the_end','nether');
+            document.getElementById('mapContainer').classList.add('overworld');
 
             // removes nether places from the map
             placesLayers['nether'].removeFrom(mcMap);
@@ -98,10 +107,6 @@ function switchMap(dimension) {
             if (document.getElementById('placesCheckbox').checked == true) {
                 placesLayers['overworld'].addTo(mcMap);
             }
-
-            // changes css classes for the mapContainer
-            document.getElementById('mapContainer').classList.remove('the_end','nether');
-            document.getElementById('mapContainer').classList.add('overworld');
 
             break;
     }
@@ -430,7 +435,12 @@ function createMarker(markerData, open = false, dimension = 'overworld') {
         popup += '<p>' + markerData['comment'] + '</p>';
     }
 
+    // edit button
     popup += '<button onclick="editPlace(this)" class="editPlace btn btn-secondary btn-sm" data-placeId="' + markerData['id'] + '"><i class="fas fa-edit"></i> Editar</button>';
+
+    // share button
+    popup += `<button onclick="copyToClipboard(this)" class="copyToClipboard btn btn-secondary btn-sm ml-3" data-id="${markerData['id']}"><i class="fas fa-copy"></i> Copiar link</button>`;
+    popup += `${markerData['id']}`;
 
     // actually adding marker to map
 
@@ -466,7 +476,12 @@ function clearMarker(id, dimension) {
     markers = new_markers
 }
 
-
+// copy link to clipboard
+function copyToClipboard(btn) {
+    var placeId = btn.dataset.id;
+    // console.log(`invoked copytoclipboard with id ${placeId}`);
+    navigator.clipboard.writeText(`${window.location.origin}/?p=${placeId}`);
+}
 
 // icons
 var blockIcon = L.Icon.extend({
@@ -513,16 +528,15 @@ mapAxis.addTo(mcMap);
 
 // var layerControl = L.control.layers().addTo(mcMap);
 
+// ======
+// INITIAL LOADING OF THE MAP
+// ======
 var currDimension;
-window.onload = function () {
 
-    var pathArray = window.location.pathname.split('/');
-    //console.log (pathArray);
-
-
-
+// function for initial loading of the map tiles and palces
+function loadMap(dimension) {
     // loads places and tiles (and hides them depending on the currently select dimension)
-    switch (pathArray[1]) {
+    switch (dimension) {
         case 'nether':
             currDimension = 'nether';
             getPlaces(false, 'overworld', true);
@@ -554,6 +568,34 @@ window.onload = function () {
             getMinedMapTiles('the_end', true);
             break;
     }
+}
+
+window.onload = function () {
+
+    // if we have a specific place query string (ex: mcmap.test/?=p315), we get that place's coordinates and dimension.
+    if (params.p) {
+        console.log(params.p);
+        $.getJSON(`/api/places/${params.p}`, function (data, status) {
+            console.log(data);
+            loadX = data.coordX;
+            loadZ = data.coordZ;
+            loadZoom = 3;
+
+            console.log(`Loading map with dimension ${data.dimension} via query string`);
+            loadMap(data.dimension.toLowerCase())
+            mcMap.setView([-loadZ, loadX], loadZoom);
+
+            // runs the switchMap function (in this case, only to change the URL and highlighted menu)
+            switchMap(data.dimension.toLowerCase());
+
+        });
+    } else {
+        var pathArray = window.location.pathname.split('/');
+        console.log(`Loading map with dimension ${pathArray[1]} via URL path`);
+        loadMap(pathArray[1]);
+    }
+
+
 };
 
 // ========
