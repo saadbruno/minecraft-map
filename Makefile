@@ -115,6 +115,10 @@ backup-mysql-prod:
 restore-mysql-prod:
 	cat ./mysql/backup/mcmap_restore.sql | docker exec -i mcmap_mysql mysql -u admin -p$(P) mcmap 
 
+# push images to docker hub
+push:
+	docker push saadbruno/mcmap_php:latest && docker push saadbruno/mcmap_nginx:latest
+
 # aliases
 sass: build-sass
 scss: build-sass

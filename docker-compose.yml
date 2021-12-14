@@ -2,7 +2,7 @@ version: '3.4'
 services:
     mcmap_nginx:
         container_name: mcmap_nginx
-        image: nginx:latest
+        image: nginx:1.21.4
         ports:
             - "${HTTP_PORT}:80"
         volumes:
