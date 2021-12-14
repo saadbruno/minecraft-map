@@ -125,7 +125,7 @@ function savePlace($formData)
     }
 
     // if there were any errors, return with the error messages
-    if ($error) {
+    if (isset($error)) {
 
         header('Content-Type: application/json; charset=UTF-8');
         $result = array();

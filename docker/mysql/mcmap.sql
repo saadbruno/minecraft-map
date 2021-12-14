@@ -47,7 +47,7 @@ CREATE TABLE `places` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `coordX` int(6) NOT NULL,
-  `coordY` int(6) NOT NULL,
+  `coordY` int(6) DEFAULT NULL,
   `coordZ` int(6) NOT NULL,
   `comment` text,
   `dimension` enum('Overworld','Nether', 'The_End') NOT NULL,
