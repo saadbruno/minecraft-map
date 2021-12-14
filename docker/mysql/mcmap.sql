@@ -32,6 +32,10 @@ CREATE TABLE `icons` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+-- Inserts default icon so the emoji picker is not empty
+INSERT INTO `icons` (`url`, `name`)
+VALUES ('https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/favicon-32x32.png', 'default icon');
+
 --
 -- Table structure for table `places`
 --
@@ -43,7 +47,7 @@ CREATE TABLE `places` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `coordX` int(6) NOT NULL,
-  `coordY` int(6) NOT NULL,
+  `coordY` int(6) DEFAULT NULL,
   `coordZ` int(6) NOT NULL,
   `comment` text,
   `dimension` enum('Overworld','Nether', 'The_End') NOT NULL,

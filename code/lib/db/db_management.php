@@ -89,7 +89,8 @@ function getIcon($id)
 
 function savePlace($formData)
 {
-
+    debug('Running the savePlace function', 'savePlace');
+    
     // if the user doesn't have the add_place or the admin flag, return an error
     if ( in_array("add_place", $_SESSION['user']['flags']) || in_array("is_admin", $_SESSION['user']['flags'])) {
         // all good, please continue
@@ -124,7 +125,7 @@ function savePlace($formData)
     }
 
     // if there were any errors, return with the error messages
-    if ($error) {
+    if (isset($error)) {
 
         header('Content-Type: application/json; charset=UTF-8');
         $result = array();
@@ -219,9 +220,9 @@ function savePlace($formData)
   $coords .= " | **Z:** " . $formData['coordZ'];
 
   if ($result['action'] == 'update') {
-    sendDiscordWebhook("update", $result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords);
+    sendDiscordWebhook($result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords, "update");
   } else {
-    sendDiscordWebhook("add", $result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords);
+    sendDiscordWebhook($result['id'], $iconData['url'], $formData['title'], $formData['comment'], $formData['dimension'], $coords, "add");
   }
   // =============
   // End Discord Webhook

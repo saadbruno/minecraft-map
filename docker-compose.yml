@@ -2,50 +2,48 @@ version: '3.4'
 services:
     mcmap_nginx:
         container_name: mcmap_nginx
-        image: saadbruno/mcmap_nginx:latest
+        image: nginx:1.21.4
         ports:
-            - "8083:80"
-            - "4001:443"
-        build:
-            context: ../
-            dockerfile: docker/nginx/prod/Dockerfile
+            - "${HTTP_PORT}:80"
         volumes:
-            - ../code/public/minedmap:/var/www/code/public/minedmap
+            - ./code:/var/www/code
+            - ./docker/nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf
+            - ./docker/nginx/logs:/var/log/nginx
         env_file:
             - .env
         links:
             - mcmap_php
         depends_on:
             - mysql
-        restart: unless-stopped
         logging:
             options:
                 max-size: 10m
     mcmap_php:
-        image: saadbruno/mcmap_php:latest
         container_name: mcmap_php
-        build:
-            context: ../
-            dockerfile: docker/php-fpm/prod/Dockerfile
+        build: ./docker/php-fpm
         expose:
             - "9000"
+        volumes:
+            - ./code:/var/www/code
+            - ./docker/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/99-overrides.ini
         env_file:
             - .env
         links:
             - mysql
         depends_on:
             - mysql
-        restart: unless-stopped
         logging:
             options:
                 max-size: 10m
     mysql:
         container_name: mcmap_mysql
-        image: mysql:5.7.22
-        expose:
-            - "3306"
+        image: mysql:8.0.16
+        ports:
+            - "3307:3306"
+        volumes:
+            - ./mysql:/var/lib/mysql
+            - ./docker/mysql/mcmap.sql:/docker-entrypoint-initdb.d/mcmap.sql
         env_file: .env
-        restart: unless-stopped
         logging:
             options:
                 max-size: 10m

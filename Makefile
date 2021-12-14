@@ -13,7 +13,7 @@ build-nginx:
 build-php:
 	docker-compose build mcmap_php
 build-sass:
-	docker run --rm  -v `pwd`/../code/scss:/usr/src/app/scss  -v `pwd`/../code/public/styles:/usr/src/app/css cscheide/node-sass node-sass -r -o /usr/src/app/css/ /usr/src/app/scss/custom/
+	docker run --rm  -v `pwd`/code/scss:/usr/src/app/scss  -v `pwd`/code/public/styles:/usr/src/app/css cscheide/node-sass node-sass -r -o /usr/src/app/css/ /usr/src/app/scss/custom/
 
 # Run commands
 run:
@@ -37,7 +37,7 @@ stop-mysql:
 clean:
 	docker system prune -f
 prune-db:
-	rm -rf ../mysql
+	rm -rf ./mysql
 redeploy: stop clean build run
 
 redeploy-web: stop-nginx stop-php clean build-nginx build-php run-nginx run-php
@@ -75,8 +75,6 @@ restore-mysql:
 
 
 #### PRODUCTION ####
-build-mysql-prod:
-	docker-compose -f docker-compose.prod.yml build --no-cache mysql
 build-nginx-prod:
 	docker-compose -f docker-compose.prod.yml build --no-cache mcmap_nginx
 build-php-prod:
@@ -102,15 +100,13 @@ stop-php-prod:
 stop-prod:
 	docker-compose -f docker-compose.prod.yml down
 
-redeploy-prod: build-sass build-nginx-prod build-php-prod stop-nginx-prod stop-php-prod run-php-prod run-nginx-prod clean
+redeploy-prod: build-sass build-nginx-prod build-php-prod run-php-prod run-nginx-prod clean
 
-redeploy-all-prod: build-sass build-prod stop-prod run-prod clean
+redeploy-all-prod: build-sass build-prod run-prod clean
 
-redeploy-mysql-prod: build-mysql-prod stop-mysql-prod run-mysql-prod clean
+redeploy-nginx-prod: build-nginx-prod run-nginx-prod clean
 
-redeploy-nginx-prod: build-nginx-prod stop-nginx-prod run-nginx-prod clean
-
-redeploy-php-prod: build-php-prod stop-php-prod run-php-prod  clean
+redeploy-php-prod: build-php-prod run-php-prod  clean
 
 redeploy-web-prod: redeploy-prod
 
@@ -118,6 +114,10 @@ backup-mysql-prod:
 	docker exec mcmap_mysql mysqldump -u admin -p$(P) mcmap | tail -n +2 > ./mysql/backup/mcmap_restore.sql;  cp ./mysql/backup/mcmap_restore.sql ./mysql/backup/mcmap_backup_`date +%Y%m%d_%H%M%S`.sql
 restore-mysql-prod:
 	cat ./mysql/backup/mcmap_restore.sql | docker exec -i mcmap_mysql mysql -u admin -p$(P) mcmap 
+
+# push images to docker hub
+push:
+	docker push saadbruno/mcmap_php:latest && docker push saadbruno/mcmap_nginx:latest
 
 # aliases
 sass: build-sass
