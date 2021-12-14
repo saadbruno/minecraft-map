@@ -71,7 +71,7 @@ import-schema:
 backup-mysql:
 	docker exec -it mcmap_mysql mysqldump -u admin -pOWIwMWI4MTQ3ZmIxNDdmZDU3NDFiMjQ2 mcmap | tail -n +2 > ./mysql/backup/mcmap_restore.sql;  cp ./mysql/backup/mcmap_restore.sql ./mysql/backup/mcmap_backup_`date +%Y%m%d_%H%M%S`.sql
 restore-mysql:
-	cat ./mysql/backup/mcmap_restore.sql | docker exec -i mcmap_mysql mysql -u admin -pOWIwMWI4MTQ3ZmIxNDdmZDU3NDFiMjQ2 mcmap 
+	cat ./docker/mysql/backup/mcmap_restore.sql | docker exec -i mcmap_mysql mysql -u admin -pOWIwMWI4MTQ3ZmIxNDdmZDU3NDFiMjQ2 mcmap 
 
 
 #### PRODUCTION ####
