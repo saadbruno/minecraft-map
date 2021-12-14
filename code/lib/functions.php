@@ -191,7 +191,7 @@ function findTimeAgo($past, $now = "now", $length = "long")
 }
 
 // Discord dwebhook, ref: https://gist.github.com/Mo45/cb0813cb8a6ebcd6524f6a36d4f8862c
-function sendDiscordWebhook($action = "add", $id, $thumb, $title, $description, $dimension, $coords)
+function sendDiscordWebhook($id, $thumb, $title, $description, $dimension, $coords, $action = "add")
 {
     $username = "Mapa do Requeijão";
     $footer = $_ENV['DOMAIN_NAME'];

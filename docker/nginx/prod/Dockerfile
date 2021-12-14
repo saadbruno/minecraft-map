@@ -1,7 +1,6 @@
-FROM nginx:1.15.8
+FROM nginx:1.19.9
 
-VOLUME /var/www/code
-WORKDIR /var/www/code
-
-COPY docker/nginx/prod/nginx.prod.conf /etc/nginx/conf.d/default.conf
 COPY /code /var/www/code
+COPY docker/nginx/prod/nginx.prod.conf /etc/nginx/conf.d/default.conf
+
+WORKDIR /var/www/code

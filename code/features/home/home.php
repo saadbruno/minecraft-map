@@ -2,7 +2,7 @@
 
 // if something was sent through a form
 
-if ($_POST['form'] == 'addPlace') {
+if (isset($_POST['form']) && $_POST['form'] == 'addPlace') {
 
     //$_POST  = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
