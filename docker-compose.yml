@@ -41,6 +41,7 @@ services:
         ports:
             - "3307:3306"
         volumes:
+            - ./docker/mysql/mysql-low-memory.cnf:/etc/mysql/conf.d/mysql-low-memory.cnf:ro
             - ./mysql:/var/lib/mysql
             - ./docker/mysql/mcmap.sql:/docker-entrypoint-initdb.d/mcmap.sql
         env_file: .env

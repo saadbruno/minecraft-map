@@ -13,10 +13,8 @@ services:
             - ./code/public/minedmap:/var/www/code/public/minedmap:ro
         env_file:
             - .env
-        links:
-            - mcmap_php
         depends_on:
-            - mysql
+            - mcmap_nginx
         restart: unless-stopped
         logging:
             options:
@@ -27,12 +25,8 @@ services:
         build:
             context: ./
             dockerfile: docker/php-fpm/prod/Dockerfile
-        expose:
-            - "9000"
         env_file:
             - .env
-        links:
-            - mysql
         depends_on:
             - mysql
         restart: unless-stopped
@@ -42,12 +36,14 @@ services:
     mysql:
         container_name: mcmap_mysql
         image: mysql:8.0.16
-        expose:
-            - "3306"
         volumes:
+            - ./docker/mysql/mysql-low-memory.cnf:/etc/mysql/conf.d/mysql-low-memory.cnf:ro
             - ./docker/mysql/mcmap.sql:/docker-entrypoint-initdb.d/mcmap.sql:ro
+            - mcmap-db:/var/lib/mysql
         env_file: .env
         restart: unless-stopped
         logging:
             options:
                 max-size: 10m
+volumes:
+    mcmap-db:
